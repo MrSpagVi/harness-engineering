@@ -1,0 +1,21 @@
+# Cache de tests
+.pytest_cache/
+
+# Configuración personal de Claude Code (no compartir cross-máquina)
+.claude/settings.local.json
+
+# Estado interno del skill actualizame (anti-duplicación). El ledger crece con el tiempo
+# y es estado de runtime, no documentación. Los reports/*.md SÍ se commitean.
+reports/_ledger.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
