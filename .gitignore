@@ -4,9 +4,8 @@
 # Configuración personal de Claude Code (no compartir cross-máquina)
 .claude/settings.local.json
 
-# Estado interno del skill actualizame (anti-duplicación). El ledger crece con el tiempo
-# y es estado de runtime, no documentación. Los reports/*.md SÍ se commitean.
-reports/_ledger.json
+# (reports/_ledger.json SÍ se commitea — necesario para que las Routines remotas
+# tengan estado persistente del anti-duplicación entre corridas.)
 
 # Python
 __pycache__/

@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "last_run_utc": "2026-05-22T16:20:21Z",
+  "items": {
+    "https://www.anthropic.com/news/anthropic-acquires-stainless": {
+      "title": "Anthropic acquires Stainless",
+      "source": "anthropic",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-18",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://claude.com/blog/claude-managed-agents-updates": {
+      "title": "New in Claude Managed Agents: self-hosted sandboxes and MCP tunnels",
+      "source": "anthropic",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-19",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://www.anthropic.com/news/anthropic-kpmg": {
+      "title": "KPMG integrates Claude across its core business and workforce of more than 276,000",
+      "source": "anthropic",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-19",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://www.anthropic.com/news/widening-conversation-ai": {
+      "title": "Widening the conversation on frontier AI",
+      "source": "anthropic",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-19",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://code.claude.com/docs/en/whats-new/2026-w20": {
+      "title": "Claude Code Week 20 (v2.1.139-142): Agent view, /goal, Fast mode Opus 4.7, Rewind summarize",
+      "source": "anthropic",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-15",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://simonwillison.net/2026/May/20/google-io/": {
+      "title": "Google I/O, Gemini Spark, Antigravity",
+      "source": "willison",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-20T15:32:17Z",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://simonwillison.net/2026/May/19/gemini-35-flash/": {
+      "title": "Gemini 3.5 Flash: more expensive, but Google plan to use it for everything",
+      "source": "willison",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-19T22:40:25Z",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://simonwillison.net/2026/May/19/5-minute-llms/": {
+      "title": "The last six months in LLMs in five minutes",
+      "source": "willison",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-19T01:09:44Z",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://simonwillison.net/2026/May/21/datasette-agent/": {
+      "title": "Datasette Agent",
+      "source": "willison",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-21T19:52:19Z",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://simonwillison.net/2026/May/20/tokens-per-second/": {
+      "title": "How fast is 10 tokens per second really?",
+      "source": "willison",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-20T17:57:45Z",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://simonwillison.net/2026/May/22/ftc-active-listening/": {
+      "title": "FTC to Require Cox Media Group settlement on 'active listening' AI",
+      "source": "willison",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-22T04:48:32Z",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://github.com/MinishLab/semble": {
+      "title": "Semble – Code search for agents that uses 98% fewer tokens than grep",
+      "source": "hn",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "2026-05-17T15:37:07Z",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://x.com/EricBuess/status/2009073718450889209": {
+      "title": "Claude Code 2.1: Agent-Scoped Hooks + Context Fork for Skills",
+      "source": "x",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "unknown",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://x.com/dani_avila7/status/2009397544565305705": {
+      "title": "Skills support Hooks directly in YAML frontmatter",
+      "source": "x",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "unknown",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://x.com/dani_avila7/status/2009620498573873379": {
+      "title": "Skills visible by default using /",
+      "source": "x",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "unknown",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://x.com/ClaudeCodeLog/status/2033705667295379568": {
+      "title": "Claude Code 2.1.77 system prompt: Agent tool no longer resumes via resume parameter",
+      "source": "x",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "unknown",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    },
+    "https://x.com/dani_avila7/status/2041188104841642156": {
+      "title": "Confusion between Skills and Subagents in Claude Code",
+      "source": "x",
+      "first_seen": "2026-05-22T16:20:21Z",
+      "last_seen": "2026-05-22T16:20:21Z",
+      "pub_date": "unknown",
+      "covered_in_report": "reports/2026-05-22-update.md"
+    }
+  },
+  "topics_covered": [
+    "antigravity-2.0",
+    "claude-code-2.1.x",
+    "agent-view",
+    "goal-command",
+    "fast-mode-opus-4.7",
+    "agent-scoped-hooks",
+    "skills-with-hooks",
+    "skills-vs-subagents",
+    "managed-agents-mcp-tunnels",
+    "stainless-acquisition",
+    "semble-mcp-code-search",
+    "gemini-3.5-flash"
+  ],
+  "failed_sources_last_run": [
+    {
+      "source": "reddit",
+      "error": "WebFetch blocked",
+      "subreddits": ["r/ClaudeAI", "r/LocalLLaMA"],
+      "retry_next_run": true
+    }
+  ]
+}
