@@ -202,7 +202,63 @@ Material consultado para diseñar el curso. Organizado por autor → fuentes →
 
 ---
 
-## 6. Otros autores del círculo (mencionar en L16)
+## 6. Ecosistema agentic — snapshot mayo 2026
+
+*Sección agregada el 2026-05-22. Mantener fresca con cada reporte semanal de `actualizame`.*
+
+### Modelos vigentes (mayo 2026)
+
+- **Claude Opus 4.7** — frontier de Anthropic, default de Fast mode desde 2026-04-13 (Week 16). Más capaz para reasoning largo y agentic loops complejos. Pin Opus 4.6 si lo necesitás con `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`.
+- **Claude Sonnet 4.6** — workhorse balanceado. Default para sub-agentes y para la mayoría de Routines (cloud).
+- **Claude Haiku 4.5** — fastest + cheapest. Default del subagent Explore (read-only).
+- **Gemini 3.5 Flash** (Google, mayo 2026) — competidor speed-first, 4x más rápido que otros frontier, 3x más caro que Gemini Flash anteriores. Modelo base de Antigravity 2.0.
+
+### Plataformas competidoras a Claude Code
+
+- **Antigravity 2.0** (Google, lanzado 19-mayo-2026 en I/O) — standalone desktop app + CLI + SDK + Managed Agents API. Multi-agent architecture (manager + subagents) builtin. Pricing $25/mes Pro vs Claude Max $200/mes. SWE-bench: Claude Code mantiene ventaja en calidad, Antigravity gana en velocidad/precio. Google deprecó Gemini CLI; todo va a Antigravity CLI desde 18-jun-2026. Heuristic: NO migrar proyectos productivos, vale curiosidad en sandbox.
+- **Cursor** — IDE fork de VS Code, foco en autocomplete + agent. Maduro pero más expensive y menos extensible que Claude Code.
+- **Windsurf** — Cascade agent. Foco en flow continuo. Niche.
+- **GitHub Copilot** — más antiguo, foco autocomplete; ahora agregando agents pero detrás en quality.
+
+### Claude Code 2.1.x — features clave de 2026 (mayo)
+
+Tracking desde Week 13 (marzo) hasta Week 20 (mayo). Para detalle por semana ver https://code.claude.com/docs/en/whats-new
+
+- **Auto mode** (Week 13, marzo) — clasificador maneja permission prompts. Safe actions corren sin interrupción; risky bloqueadas. Middle ground entre approve-all y `--dangerously-skip-permissions`.
+- **Computer use en CLI** (Week 14, marzo) — Claude abre apps nativas, clickea UI, verifica cambios desde la terminal.
+- **Ultraplan** (Week 15, abril) — draft de plan en cloud, review en web editor, ejecutar remoto o pull local.
+- **`/ultrareview`** (Week 17, abril) — fleet de agentes bug-hunting que corre en cloud y devuelve findings al CLI/Desktop.
+- **Routines** (Week 16, abril) — templated cloud agents que se disparan por schedule cron, GitHub event, o API call. Necesita Pro/Max. **Esto es lo que usamos para activar `actualizame` semanal.**
+- **`claude project purge`** + **PowerShell tool nativo** + **Windows sin Git Bash** (Week 18, abril) — Windows-first improvements.
+- **Plugins desde .zip y URL** (Week 19, mayo) — `--plugin-dir` acepta `.zip`, `--plugin-url` fetchea archivos. Plugin marketplace.
+- **Hard deny rules en auto mode** (Week 19) — bloquean acciones unconditionally, no se overridean con allow.
+- **Agent view (`claude agents`)** (Week 20, mayo) — panel de todas las sesiones interactivas + background con estado.
+- **`/goal`** (Week 20) — Claude trabaja entre turns hasta cumplir completion condition.
+- **Skills + Hooks juntos en frontmatter** (2.1.x) — Skills pueden incluir hooks PreToolUse/PostToolUse/Stop directamente en YAML. Agent-Scoped Hooks: hooks que solo corren durante el lifecycle de un sub-agente específico.
+- **Skills visibles como `/commands`** (2.1.x) — aparecen junto a comandos en el menú `/`. Esconder con flag en frontmatter.
+- **Skill hot-reload** (2.1.x) — cambios en `~/.claude/skills` o `.claude/skills` se aplican sin reiniciar sesión.
+- **Cambio breaking (2.1.77)** — Agent tool ya NO soporta `resume` parameter. Continuaciones via `SendMessage` con agent ID/name en `to`. New Agent calls siempre arrancan fresh.
+
+### MCP ecosystem destacado
+
+- **Semble** (https://github.com/MinishLab/semble, 442 puntos HN 2026-05-17) — code search server con embeddings + BM25. **98% menos tokens que grep+read**. Zero config, sin API keys. Caso real de "Ubertool" (Ronacher) aplicado a code search.
+- **Self-hosted sandboxes + MCP tunnels** (Anthropic Managed Agents, 2026-05-19) — cloud agents pueden conectar a tus propios MCP servers via túneles.
+
+### Anthropic moves recientes
+
+- **Stainless acquired** (2026-05-18) — refuerza el Agent SDK con SDK generation cross-language desde OpenAPI specs.
+- **KPMG deploy 276K employees** (2026-05-19) — datapoint enterprise. Claude Code deploy-ready a escala.
+
+### Cómo mantenerse vigente (sistema operativo)
+
+1. **Reports semanales `actualizame`** — `reports/YYYY-MM-DD-update.md` generado cada lunes 9am BA via Routines. Cubre Anthropic, Willison, Huntley, Ronacher, Reddit, HN, MCP spec, X.
+2. **Suscribirse a feeds RSS** — Willison `https://simonwillison.net/atom/everything/`, Ronacher `https://lucumr.pocoo.org/feed.atom`.
+3. **Cuentas X clave** — @simonw, @aliveevolve (Mario Zechner), @arcaranth (Ronacher), @ClaudeCodeLog (changelog automático del system prompt).
+4. **Para Antigravity / Gemini**: blog.google/developers + Logan Kilpatrick en X.
+
+---
+
+## 7. Otros autores del círculo (mencionar en L16)
 
 - **Mario Zechner** — autor de **Pi**, agente minimalista (Read/Write/Edit/Bash, system prompt más corto conocido). Referencia para "harness mínimo".
 - **Solomon Hykes** — cita canónica: *"An AI agent is an LLM wrecking its environment in a loop."*
