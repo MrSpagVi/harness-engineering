@@ -1634,6 +1634,11 @@ awards(id, book_id, award_name, year, country)
         </div>
       </div>
 
+      <div class="callout tip">
+        <span class="callout-label">Más allá de CLAUDE.md — memoria de proyecto</span>
+        <p><code>CLAUDE.md</code> es memoria <em>que vos escribís</em>. Además existe la <strong>auto memory</strong> (Claude guarda hechos entre sesiones por su cuenta) y un ecosistema creciente de herramientas de memoria de proyecto — por ejemplo <strong>Recall</strong> (open source, 2026), que le da a Claude Code una memoria local persistente del proyecto. Sirven cuando <code>CLAUDE.md</code> se quedaría corto: historial de decisiones, contexto que cambia seguido. Mismo principio que toda esta lección: <strong>el context window es el recurso fundamental</strong>, y estas piezas deciden qué entra en él.</p>
+      </div>
+
       <div class="callout success">
         <span class="callout-label">A retener</span>
         <code>CLAUDE.md</code> es el harness más barato y de mejor ROI. Escribir 30 líneas buenas te ahorra horas de corregir al agente. Tratalo como inversión: el tiempo que ponés acá se amortiza la primera tarde de uso intensivo.
@@ -1766,6 +1771,11 @@ mcp__sentry__*               # cualquier tool del MCP "sentry"</code></pre>
       </ul>
       <p>Sumá un MCP que traiga contenido externo y cerraste el círculo. Un prompt injection en una página puede convertir tu sesión en exfiltración silenciosa.</p>
 
+      <div class="callout tip">
+        <span class="callout-label">Caso real (junio 2026)</span>
+        <p>Fernando Irarrázaval montó un asistente de IA con un secreto adentro y dejó que <strong>2.000 personas intentaran robarlo</strong> vía prompt injection: ~6.000 intentos sobre un modelo con entrenamiento anti-injection (Opus 4.6). <strong>Nadie filtró el secreto.</strong> La lectura correcta no es "el problema está resuelto" — es que el hardening del modelo sube el piso, pero <strong>no reemplaza el diseño de blast radius</strong>. La defensa por capas (permisos + sandbox + modelo) es lo que funciona; confiar solo en una es frágil. (Vía Willison, <em>"What happened after 2,000 people tried to hack my AI assistant"</em>.)</p>
+      </div>
+
       <h2>Cómo cortar la trifecta con permisos</h2>
       <p>Tres estrategias, en orden de impacto:</p>
       <ol>
@@ -1779,6 +1789,11 @@ mcp__sentry__*               # cualquier tool del MCP "sentry"</code></pre>
       <div class="callout warning">
         <span class="callout-label">Anti-patrón oficial</span>
         Anthropic avisa: <em>"Bash permission patterns that try to constrain command arguments are fragile."</em> Una regla como <code>Bash(pytest *)</code> es burlable con <code>pytest; rm -rf /</code>. Si necesitás filtrar contenido de argumentos, mejor usar un <strong>hook PreToolUse</strong> (Lección 8) — esos sí son determinísticos.
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-label">Novedad junio 2026 — permisos más finos</span>
+        <p>Las deny/ask rules ahora pueden matchear <strong>parámetros</strong> de una tool con la sintaxis <code>Tool(param:value)</code> — por ejemplo <code>Agent(model:opus)</code> para pedir confirmación antes de spawnear un sub-agente caro. Además: <code>sandbox.credentials</code> bloquea que comandos en sandbox lean archivos de credenciales y secrets, y <code>autoMode.classifyAllShell</code> rutea todos los comandos Bash/PowerShell por el clasificador de auto mode. Más palancas para cerrar la trifecta sin matar productividad.</p>
       </div>
 
       <div class="table-wrap">
@@ -2081,6 +2096,35 @@ NUNCA deployar a producción desde acá. Eso es otra skill.
         <li>Si necesitás <strong>enseñarle a Claude cómo hacer algo</strong> → skill.</li>
         <li>Muchas veces conviven: un MCP expone el "qué" (datos), una skill explica el "cómo" (procedimiento).</li>
       </ul>
+
+      <h2>Patrón avanzado: skills encadenadas (prompt chaining)</h2>
+      <p>Una skill suelta ya rinde. Pero el salto de calidad viene cuando <strong>encadenás varias</strong>, donde el output de una alimenta a la siguiente. Matt Pocock (aihero.dev) documentó un pipeline que usa todos los días para ir de idea a código:</p>
+
+      <div class="callout tip">
+        <span class="callout-label">Cita Matt Pocock</span>
+        <em>"If you have a garbage code base, the AI will produce garbage within that code base."</em> Por eso el pipeline arranca en diseño y termina en tests — no en "escribime el código".
+      </div>
+
+      <div class="code-block">
+        <span class="code-lang">flujo</span>
+        <button class="copy-btn">Copiar</button>
+<pre><code>/grill-me  →  /to-prd  →  /to-issues  →  /tdd
+  idea         qué          tareas         código
+                    (+ /improve-codebase-architecture si la base está frágil)</code></pre>
+      </div>
+
+      <ul>
+        <li><strong><code>/grill-me</code></strong> — te interroga sobre el diseño (las 5 preguntas + edge cases) antes de codear. No escribe nada hasta tu "sí".</li>
+        <li><strong><code>/to-prd</code></strong> — convierte la charla en un PRD con user stories. Es <strong>contexto comprimido que sobrevive entre sesiones</strong>: el agente lo relee en vez de reconstruir el entendimiento.</li>
+        <li><strong><code>/to-issues</code></strong> — parte el PRD en tareas como <strong>vertical slices</strong> (cortes finos que atraviesan todas las capas, demostrables solos), con dependencias para paralelizar. El anti-patrón es el corte horizontal ("primero todos los modelos") que no entrega valor verificable hasta el final.</li>
+        <li><strong><code>/tdd</code></strong> — red-green-refactor estricto. Pocock lo llama <em>"the most consistent way to improve agent outputs"</em>: es <strong>verification &gt; generation</strong> hecho hábito.</li>
+        <li><strong><code>/improve-codebase-architecture</code></strong> — diagnostica módulos shallow y fronteras de testeo difusas antes de construir sobre una base frágil.</li>
+      </ul>
+
+      <div class="callout success">
+        <span class="callout-label">El nombre en la industria</span>
+        Esto es <strong>prompt chaining</strong> — el patrón 1 de "Building effective agents" (Anthropic): pasos secuenciales con gates entre uno y otro. Cada skill es un gate que tenés que pasar antes del siguiente. Lo googleás así.
+      </div>
 
       <h2>Mini-ejercicio — skill <code>cuit-validator</code></h2>
       <p>Olvidate de BookClub. Caso real argentino: cada vez que tu equipo procesa altas de clientes, alguien tiene que validar el CUIT (Clave Única de Identificación Tributaria). Hay un algoritmo de checksum específico. En vez de explicarlo cada vez en chat, lo convertís en skill.</p>
@@ -2613,9 +2657,9 @@ Devolvé el review en formato:
       <div class="callout warning">
         <span class="callout-label">Importante</span>
         <ul>
-          <li><strong>No se pueden anidar</strong>: un sub-agente no puede crear otro sub-agente. Tu agente principal es siempre el orquestador. Esto previene anidamiento infinito.</li>
+          <li><strong>Ahora sí se pueden anidar</strong> (desde Claude Code Week 24, junio 2026): un sub-agente puede crear sus propios sub-agentes. El panel <code>/agents</code> muestra el árbol completo. Las cadenas en background tienen un cap de <strong>5 niveles</strong> para evitar árboles concurrentes descontrolados; las foreground son self-limiting. <em>Ojo</em>: hasta mayo de 2026 esto NO se podía — si leés material viejo que dice "los sub-agentes no anidan", quedó desactualizado.</li>
           <li><strong>El contexto NO se persiste entre invocaciones</strong>: cada vez que el agente principal llama al sub-agente, arranca limpio. Si necesitás continuidad, escribí a archivo.</li>
-          <li><strong>Solo viven dentro de una sesión</strong>: para correr muchos en paralelo en sesiones independientes, usá <strong>Background agents</strong> (otro mecanismo distinto).</li>
+          <li><strong>Solo viven dentro de una sesión</strong>: para correr muchos en paralelo en sesiones independientes, usá <strong>Background agents</strong> (otro mecanismo distinto). Desde Week 26 (junio 2026), los background subagents que necesitan permiso lo piden en la sesión principal en vez de auto-denegar.</li>
         </ul>
       </div>
 
@@ -3009,6 +3053,11 @@ if __name__ == "__main__":
         <li><strong>Project</strong>: en <code>.mcp.json</code> de la raíz del repo — todos los que clonen lo tienen.</li>
         <li><strong>User</strong>: tu <code>~/.claude/</code>, aplica a todos tus proyectos.</li>
       </ul>
+
+      <div class="callout tip">
+        <span class="callout-label">Novedad junio 2026 — auth desde la CLI</span>
+        Para servers que requieren OAuth, ya no necesitás abrir el menú interactivo <code>/mcp</code>: <code>claude mcp login &lt;server&gt;</code> corre el flujo de OAuth directo desde la shell, y <code>claude mcp logout &lt;server&gt;</code> limpia las credenciales guardadas. Útil para scripting y setup reproducible.
+      </div>
       <p>Permission rules para MCP tools usan el formato <code>mcp__&lt;server&gt;__&lt;tool&gt;</code>:</p>
       <div class="code-block">
         <span class="code-lang">json</span>
@@ -3270,6 +3319,33 @@ if __name__ == "__main__":
 
       <p>El framework de 5 preguntas funciona para los dos extremos — lo que cambia son las respuestas. Ralph minimiza Q4 (acepta sandbox como guardrail) y maximiza Q5 (backpressure agresivo). Hands-off minimiza Q3 (tools amplios) y maximiza Q4 (permisos restrictivos en prod).</p>
 
+      <h2>Dos loops más que vas a usar</h2>
+      <p>El Ralph loop es el loop conceptual. Pero en la práctica vas a toparte con otros dos, distintos y concretos:</p>
+
+      <h3>El comando <code>/loop</code> (Claude Code)</h3>
+      <p>No confundir con el Ralph loop. <code>/loop</code> es un slash command que <strong>corre un prompt o comando en intervalo recurrente</strong> — o se auto-regula si omitís el intervalo. Sirve para tareas repetitivas de monitoreo o mantenimiento, no para construir software de cero.</p>
+      <div class="code-block">
+        <span class="code-lang">claude code</span>
+        <button class="copy-btn">Copiar</button>
+<pre><code># Correr una skill/comando cada 5 minutos
+/loop 5m /actualizame
+
+# Sin intervalo: el modelo se auto-pacea hasta cumplir la condición
+/loop revisá el estado del deploy y avisame cuando termine</code></pre>
+      </div>
+      <p>Es el primo "domesticado" del Ralph loop: en vez de un <code>while</code> infinito en YOLO, es un loop gobernado por el harness, con permisos normales. Buen ejemplo de <em>"automatizá solo lo que hacés regularmente"</em> (Ronacher).</p>
+
+      <h3>El loop económico multi-modelo (abaratar tokens)</h3>
+      <p>Un patrón que explota las capacidades de cada modelo para bajar la factura: un <strong>modelo caro e inteligente planea y revisa</strong>, un <strong>modelo barato escribe el bulk del código</strong>, y se itera con feedback hasta cumplir el objetivo. Se conoce como <strong>orchestrator routing</strong> o <em>DeepClaude</em> (Claude + DeepSeek).</p>
+      <div class="callout tip">
+        <span class="callout-label">La idea en una línea</span>
+        Pagás tarifa cara por <strong>pocas decisiones de alto valor</strong> (arquitectura, review) y tarifa barata por el <strong>volumen de tokens</strong> (implementación). Es la regla del 80/20 de la L15, pero aplicada <em>entre proveedores distintos</em> (Claude/Opus orquesta · DeepSeek o GLM escriben).
+      </div>
+      <div class="callout warning">
+        <span class="callout-label">La paradoja multi-agente</span>
+        Cuidado: un sistema multi-agente <strong>mal configurado gasta MÁS</strong> tokens, no menos (cada loop re-invoca planning + generación + reflexión). El ahorro NO viene de "usar varios modelos" — viene de <strong>rutear el volumen al modelo barato</strong> y de <strong>cortar el loop con exit conditions</strong> (ej: "máximo 10 iteraciones o hasta que pasen los tests"). Sin esa disciplina, sale el tiro por la culata.
+      </div>
+
       <h2>Aplicación: 3 escenarios distintos</h2>
       <p>Ahora la práctica. Tres escenarios reales, mismo framework, harnesses diferentes. Para cada uno aplico las 5 preguntas y muestro el sketch del harness resultante.</p>
 
@@ -3362,6 +3438,11 @@ if __name__ == "__main__":
       </div>
 
       <p>Cuando un agente "se confunde", no es porque está distraído, cansado o no le interesa. No es porque el modelo es malo. Es porque <strong>le falta algo en el harness</strong>. Esa traducción mental es la base de toda la habilidad 2. Mientras pienses como si estuvieras lidiando con un junior despistado, vas a aplicar las soluciones que aplicarías a un junior — explicarle de nuevo, darle "feedback constructivo", esperar que aprenda. Ninguna funciona. Lo que funciona es modificar el entorno.</p>
+
+      <div class="callout warning">
+        <span class="callout-label">Corolario (junio 2026) — no confíes en la narración</span>
+        <p>Un caso que circuló: el texto de "Extended Thinking" que Claude Code muestra <strong>no necesariamente es el reasoning real</strong> del modelo — es una representación, no un log fiel. Misma lección que antropomorfizar, aplicada al diagnóstico: no diagnostiques por lo que el agente <em>dice</em> que pensó o hizo. <strong>Verificá la evidencia material</strong> — el diff, la salida del comando, el estado del archivo. <em>"If you didn't see it run, it isn't a working system."</em></p>
+      </div>
 
       <h2>La pregunta única</h2>
       <p>Cada vez que algo salga mal, hacete una sola pregunta:</p>
@@ -3503,6 +3584,14 @@ if __name__ == "__main__":
 
       <p>Esta línea concentra toda la habilidad 2. Si el agente te dice "listo" pero vos no viste el código correr, no testeaste el output, no leíste el diff entero — <strong>no sabés si funciona</strong>. El agente puede ser entusiasta sin que eso sea evidencia. Tu trabajo es exigir la verificación, no aceptar el "listo" verbal.</p>
 
+      <h2>Cuando sospechás de tu propio harness: <code>--safe-mode</code></h2>
+      <p>A veces el problema no es una pieza faltante sino una pieza que <strong>está rota o estorba</strong>: un hook mal escrito, un MCP que cuelga, una skill que se dispara cuando no debe, un <code>CLAUDE.md</code> contradictorio. Para aislarlo, Claude Code tiene (desde Week 24, junio 2026) el flag <code>--safe-mode</code>.</p>
+
+      <div class="callout tip">
+        <span class="callout-label">Herramienta de diagnóstico</span>
+        <p><code>claude --safe-mode</code> arranca con <strong>todas las customizaciones desactivadas</strong>: no carga <code>CLAUDE.md</code>, skills, plugins, hooks, MCP servers ni comandos/agentes custom. Siguen funcionando auth, selección de modelo, tools built-in y permisos. <strong>Si el problema desaparece en safe mode, una de esas superficies es la causa.</strong> Es el equivalente al "arrancar Windows en modo seguro" para tu harness — bisecás el problema en un comando.</p>
+      </div>
+
       <h2>Las 4 habilidades en el momento de diagnosticar</h2>
       <ul>
         <li><strong>Diagnosticar</strong> es lo que estás haciendo. La taxonomía de 5 tipos es el atajo.</li>
@@ -3622,6 +3711,14 @@ if __name__ == "__main__":
 
       <h3>8. Steering loop (Fowler)</h3>
       <p>Es la disciplina que ya conocés — la habilidad 3 con nombre técnico. Cuando un problema se repite, mejorás el harness, no la conversación. Esto NO es un patrón puntual: es el meta-patrón que mantiene vivos a los otros siete.</p>
+
+      <h3>9. Dynamic workflows · orquestación a escala (Anthropic, mayo–junio 2026)</h3>
+      <p>Desde Week 22, Claude Code puede escribir un script que orquesta <strong>decenas o cientos de sub-agentes</strong> de forma determinística (fan-out, loops, condicionales) en vez de delegar uno por uno a mano. Es el patrón <strong>orchestrator-workers</strong> (#4 de Anthropic) llevado a escala industrial — útil para migraciones, auditorías y barridos que no entran en una sola context window. Va de la mano con los <strong>sub-agentes anidados</strong> (un worker que spawnea sus propios workers, cap 5 niveles). Heurística: NO lo uses para tareas que un solo agente resuelve — es potencia para problemas genuinamente grandes, no default.</p>
+
+      <div class="callout warning">
+        <span class="callout-label">Lectura 2026 — "The Coming Loop" (Ronacher)</span>
+        <p>Ronacher (junio 2026) analiza dónde los loops máquina-dirigidos rinden y dónde rompen la <strong>comprensión humana</strong> del código. Conecta directo con su tesis del <em>mental disengagement</em>: cuanto más automatizás el loop, más riesgo de que nadie entienda lo que se construyó. El antídoto sigue siendo el mismo — backpressure fuerte (#6) y revisión real, no fe en el "listo". El campo frontier (Ralph, dynamic workflows) y el pragmático (hands-off con verificación) son dos polos del mismo eje: elegí según el blast radius, no según la moda.</p>
+      </div>
 
       <h2>Antipatrones — los que ya quemaron a otros</h2>
 
@@ -4107,6 +4204,18 @@ if __name__ == "__main__":
       </div>
 
       <p><strong>Heurística inicial</strong>: empezá con Sonnet. Bajá a Haiku para sub-agentes y tareas chicas (es donde se acumula la mayoría del volumen). Subí a Opus solo cuando hay evidencia de que Sonnet no llega.</p>
+
+      <div class="callout tip">
+        <span class="callout-label">Snapshot de versiones · junio 2026</span>
+        <p>Las versiones concretas envejecen rápido — los <em>tiers</em> (Haiku/Sonnet/Opus) no. A junio 2026:</p>
+        <ul>
+          <li><strong>Opus 4.8</strong> — nuevo default de Claude Code (Max, Team Premium, Enterprise, API) desde Week 22. High effort por defecto; <code>/effort xhigh</code> para lo más duro. Reemplazó a Opus 4.7, que había sido default desde abril.</li>
+          <li><strong>Sonnet 4.6</strong> — workhorse balanceado. Default de sub-agentes y Routines.</li>
+          <li><strong>Haiku 4.5</strong> — fastest + cheapest. Default del sub-agente Explore.</li>
+          <li><strong>Fable 5 / Mythos 5</strong> — frontier nueva de Anthropic (junio 2026), <strong>suspendida días después por una directiva de export control de US</strong>. No es un modelo que puedas usar establemente hoy; no reorganices tu workflow alrededor de él.</li>
+          <li><strong>Competencia</strong>: Gemini 3.5 Flash (Google, speed-first), GPT-5.6 (OpenAI, en preview), presión local-first creciente (DeepSeek V4 Pro, Qwen3.6 para coding local). El protocolo de "modelos nuevos" de abajo aplica a todos.</li>
+        </ul>
+      </div>
 
       <h2>Prompt caching — el enabler oculto</h2>
 

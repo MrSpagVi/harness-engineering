@@ -202,16 +202,17 @@ Material consultado para diseñar el curso. Organizado por autor → fuentes →
 
 ---
 
-## 6. Ecosistema agentic — snapshot mayo 2026
+## 6. Ecosistema agentic — snapshot junio 2026
 
-*Sección agregada el 2026-05-22. Mantener fresca con cada reporte semanal de `actualizame`.*
+*Sección agregada el 2026-05-22. Actualizada 2026-06-27. Mantener fresca con cada reporte semanal de `actualizame`.*
 
-### Modelos vigentes (mayo 2026)
+### Modelos vigentes (junio 2026)
 
-- **Claude Opus 4.7** — frontier de Anthropic, default de Fast mode desde 2026-04-13 (Week 16). Más capaz para reasoning largo y agentic loops complejos. Pin Opus 4.6 si lo necesitás con `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1`.
+- **Claude Opus 4.8** — **nuevo default** de Claude Code (Max, Team Premium, Enterprise pay-as-you-go, API) desde Week 22 (2026-05-25). High effort por defecto; `/effort xhigh` para lo más duro. Fast mode corre sobre 4.8 a $10/$50 por MTok. Reemplazó a Opus 4.7 (que había sido frontier desde abril/Week 16).
 - **Claude Sonnet 4.6** — workhorse balanceado. Default para sub-agentes y para la mayoría de Routines (cloud).
 - **Claude Haiku 4.5** — fastest + cheapest. Default del subagent Explore (read-only).
-- **Gemini 3.5 Flash** (Google, mayo 2026) — competidor speed-first, 4x más rápido que otros frontier, 3x más caro que Gemini Flash anteriores. Modelo base de Antigravity 2.0.
+- **Claude Fable 5 / Mythos 5** — frontier nueva de Anthropic (~2026-06-09). **Suspendidos días después (2026-06-12/13) por una directiva de export control del gobierno de US** citando un supuesto "jailbreak" (que era code review estándar). NO es un modelo usable establemente hoy — no reorganizar workflows alrededor. Saga relacionada: "silent guardrails" del system card de Fable (intervenciones que degradaban en silencio temas de frontier AI), revertidos tras backlash → ahora flagged requests caen a Opus 4.8 y devuelven el motivo del refusal.
+- **Competencia**: **Gemini 3.5 Flash** (Google, speed-first, base de Antigravity 2.0); **GPT-5.6** (OpenAI, serie Sol/Terra/Luna, preview limitada, jun 2026); presión local-first creciente (DeepSeek V4 Pro a ~5% del costo de Claude, Qwen3.6-27B para coding local).
 
 ### Plataformas competidoras a Claude Code
 
@@ -220,9 +221,20 @@ Material consultado para diseñar el curso. Organizado por autor → fuentes →
 - **Windsurf** — Cascade agent. Foco en flow continuo. Niche.
 - **GitHub Copilot** — más antiguo, foco autocomplete; ahora agregando agents pero detrás en quality.
 
-### Claude Code 2.1.x — features clave de 2026 (mayo)
+### Claude Code 2.1.x — features clave de 2026 (hasta junio / Week 26)
 
-Tracking desde Week 13 (marzo) hasta Week 20 (mayo). Para detalle por semana ver https://code.claude.com/docs/en/whats-new
+Tracking desde Week 13 (marzo) hasta Week 26 (junio). Para detalle por semana ver https://code.claude.com/docs/en/whats-new
+
+**Junio 2026 (Weeks 21-26) — lo nuevo desde el snapshot de mayo:**
+- **Opus 4.8 nuevo default** + **dynamic workflows** (orquestar decenas/cientos de subagentes desde un script) + **security-guidance plugin** (Week 22).
+- **Sub-agentes anidados** — un sub-agente puede spawnear sub-agentes; árbol en `/agents`; cap 5 niveles en background (Week 24). **Corrige el "cannot nest" anterior.**
+- **`--safe-mode`** — arranca sin CLAUDE.md/skills/plugins/hooks/MCP para aislar config rota (Week 24). Herramienta de diagnóstico (L12).
+- **`/cd`** (mover sesión sin romper cache) + **`fallbackModel`** (hasta 3 fallbacks) (Week 24).
+- **Artifacts** (output de sesión → página live compartible) + **deny/ask rules con `Tool(param:value)`** ej. `Agent(model:opus)` + **auto mode bloquea git destructivo** (Week 25).
+- **`claude mcp login/logout`** (OAuth de MCP desde la shell) + **shell mode responde al `!`** (`! npm test` → explicación) + **background subagents piden permiso en sesión principal** + **`sandbox.credentials`** + **`autoMode.classifyAllShell`** (Week 26).
+- **Auto mode en Bedrock/Vertex/Foundry** (Week 23) + **Auto mode en Pro** + **`/code-review`** + **`/usage`** (Week 21).
+
+**Marzo-mayo 2026 (Weeks 13-20):**
 
 - **Auto mode** (Week 13, marzo) — clasificador maneja permission prompts. Safe actions corren sin interrupción; risky bloqueadas. Middle ground entre approve-all y `--dangerously-skip-permissions`.
 - **Computer use en CLI** (Week 14, marzo) — Claude abre apps nativas, clickea UI, verifica cambios desde la terminal.
@@ -266,6 +278,29 @@ Tracking desde Week 13 (marzo) hasta Week 20 (mayo). Para detalle por semana ver
 - **Boris Cherny** — creador Claude Code (Anthropic)
 - **Andrej Karpathy** — acuñó "vibe coding" (feb 2025)
 - **Thariq Shihipar** (equipo Claude Code): *"Long running agentic products like Claude Code are made feasible by prompt caching."*
+
+---
+
+## 8. Matt Pocock — aihero.dev
+
+### URL
+- **5 Agent Skills I Use Every Day** — https://www.aihero.dev/5-agent-skills-i-use-every-day
+
+### Conceptos clave (a usar en L7, L13)
+- **Tesis central**: los agentes no tienen memoria entre sesiones → encodeá tus workflows en **skills** reusables. Una skill bien hecha sube la calidad del output más que cualquier prompt suelto.
+- **Pipeline de skills encadenadas** (caso real de *prompt chaining*, patrón 1 de Anthropic): `/grill-me → /to-prd → /to-issues → /tdd`, más `/improve-codebase-architecture` cuando la base está frágil.
+  1. **`/grill-me`** — interrogatorio de diseño antes de codear (≈ las 5 preguntas de diseño llevadas a skill).
+  2. **`/to-prd`** — conversación → PRD con user stories Agile (contexto comprimido que sobrevive entre sesiones).
+  3. **`/to-issues`** — PRD → issues como **vertical slices** (corte fino que atraviesa todas las capas) con relaciones de bloqueo para paralelizar. Anti-patrón: horizontal slices.
+  4. **`/tdd`** — red-green-refactor; *"the most consistent way to improve agent outputs"* (= verification > generation hecho hábito).
+  5. **`/improve-codebase-architecture`** — profundizar módulos shallow, fronteras de testeo.
+
+### Citas
+- *"If you have a garbage code base, the AI will produce garbage within that code base."*
+- *"Interview me relentlessly about every aspect of this plan until we reach a shared understanding."* (directiva de `/grill-me`)
+
+### Nota
+Sesgo TS/web (GitHub + tests automatizados). Para audiencia data (Fabric/PySpark) el spirit aplica pero los vertical slices y el TDD se ven distinto (testear transformaciones puras separadas del I/O de Spark). Las 5 skills están instaladas a nivel usuario en `~/.claude/skills/` (versión adaptada al español/setup de JV).
 
 ---
 

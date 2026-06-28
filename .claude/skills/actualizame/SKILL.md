@@ -1,6 +1,6 @@
 ---
 name: actualizame
-description: Genera un reporte semanal con las novedades de los últimos 7 días en harness engineering, fetcheando fuentes canónicas (Anthropic, Willison, Huntley, Ronacher, Reddit, HackerNews, MCP spec, X/Twitter). Mantiene un ledger anti-duplicación para no repetir info ya cubierta. Output en reports/YYYY-MM-DD-update.md. Usar cuando el usuario diga "actualizame", "novedades", o pida ponerse al día.
+description: Genera un reporte semanal con las novedades de los últimos 7 días en harness engineering, fetcheando fuentes canónicas (Anthropic, Willison, Huntley, Ronacher, Reddit, HackerNews, MCP spec, X/Twitter). Mantiene un ledger anti-duplicación para no repetir info ya cubierta. Output en HTML limpio (reports/YYYY-MM-DD-update.html). Usar cuando el usuario diga "actualizame", "novedades", o pida ponerse al día.
 when_to_use: el usuario dice "actualizame", "qué hay nuevo", "novedades", "ponéme al día" sobre harness engineering, agentes, Claude Code, MCP, o pide un update semanal
 allowed-tools:
   - WebFetch(domain:anthropic.com)
@@ -16,6 +16,7 @@ allowed-tools:
   - WebSearch
   - Read(./REFERENCES.md)
   - Read(./reports/**)
+  - Read(./.claude/skills/actualizame/report-template.html)
   - Write(./reports/**)
   - Bash(mkdir -p reports)
   - Bash(date *)
@@ -23,7 +24,7 @@ allowed-tools:
 
 # Skill: actualizame
 
-Genera un reporte semanal con las novedades en harness engineering (últimos 7 días), filtrando contra un ledger para no repetir info ya cubierta. Output: `reports/YYYY-MM-DD-update.md`.
+Genera un reporte semanal con las novedades en harness engineering (últimos 7 días), filtrando contra un ledger para no repetir info ya cubierta. **Output: `reports/YYYY-MM-DD-update.html`** — HTML limpio y legible, NO markdown.
 
 ## Procedimiento (9 pasos)
 
@@ -125,100 +126,39 @@ Para items de HN y Reddit que pasaron el filtro de ledger, aplicar además:
 - Si el title no menciona ninguna keyword, descartar
 - Si el title menciona una keyword pero el cuerpo es spam/promo obvio, descartar
 
-### Paso 8 · Generar el reporte
+### Paso 8 · Generar el reporte (HTML, NO markdown)
 
 **Determinar path del archivo**:
-- Base: `reports/YYYY-MM-DD-update.md` (usar fecha UTC de hoy)
-- Si existe, usar sufijo: `reports/YYYY-MM-DD-update-2.md`, `-3.md`, etc.
+- Base: `reports/YYYY-MM-DD-update.html` (usar fecha UTC de hoy)
+- Si existe, usar sufijo: `reports/YYYY-MM-DD-update-2.html`, `-3.html`, etc.
 
 Asegurar que `reports/` existe: `mkdir -p reports`.
 
-**Caso A — hay items NUEVO o ACTUALIZADO**:
+**Usar el template**: leer `./.claude/skills/actualizame/report-template.html` y reemplazar los placeholders `{{...}}`. El template ya trae el CSS (dark mode estilo Anthropic, igual paleta que el curso). NO inventar estilos nuevos — solo llenar el contenido. Reglas de formato HTML:
 
-Escribir el reporte siguiendo esta plantilla exacta:
+- Cada **fuente** va en un `<div class="source">` con su `<h3>`.
+- Cada **item** es un `<li>` con badge: `<span class="badge nuevo">NUEVO</span>` o `<span class="badge upd">ACTUALIZADO</span>`, seguido del `<a href="url">título</a>`, la síntesis (2-3 oraciones), y la acción en `<span class="action">· acción: leé / mirá / FYI</span>`.
+- **Callouts**: usar `<div class="callout tip|warn|ok|danger">` con `<span class="lbl">Etiqueta</span>` para destacados.
+- El **TL;DR** va en `<div class="tldr">` con un `<ul>`.
 
-```markdown
-# Update Harness Engineering · YYYY-MM-DD
-*Ventana cruda: últimos 7 días · Filtrado contra ledger (último update: YYYY-MM-DD HH:MM UTC, o "primera corrida")*
+**Caso A — hay items NUEVO o ACTUALIZADO**. Placeholders del template:
+- `{{TITULO}}` (tag `<title>`) y `{{H1}}` → `Update Harness Engineering · YYYY-MM-DD` (en H1, envolver "Harness Engineering" en `<span class="acc">`).
+- `{{SUBTITULO}}` → `Ventana cruda: últimos 7 días · Filtrado contra ledger (último update: YYYY-MM-DD HH:MM UTC, o "primera corrida")`
+- `{{CONTENIDO}}` → el cuerpo, con estas secciones en este orden (mismo contenido que la versión markdown previa, ahora en HTML):
+  1. `<div class="tldr">` **TL;DR — qué hacer esta semana**: 3 acciones concretas y aplicables.
+  2. `<h2>Lo más importante (NUEVO)</h2>` — 1 a 3 piezas que más rinden, 2-3 oraciones cada una (NO listado seco).
+  3. `<h2>Actualizado desde el último reporte</h2>` — solo si hay items ACTUALIZADO; si no, omitir.
+  4. `<h2>Por fuente</h2>` con un `<div class="source">` por cada una: Anthropic oficial, Simon Willison, Geoffrey Huntley, Armin Ronacher, Reddit (r/ClaudeAI, r/LocalLLaMA), HackerNews, MCP spec, X/Twitter (o "cobertura limitada (sin API)" si <3 resultados).
+  5. `<h2>Cambios a considerar para el curso</h2>` — mapear cada novedad relevante → lección de `curso.html`. Si no aplica: "Sin cambios necesarios al curso esta semana." No inflar.
+  6. `<h2>Fuentes no disponibles</h2>` — solo si alguna falló (nombre, error, causa). El ledger NO se actualiza para esas.
+  7. `<h2>Para practicar esta semana</h2>` — 2 sugerencias accionables en <30 min.
+- `{{FOOTER}}` → `Ledger actualizado: N items agregados / M actualizados. Total acumulado: T items.`
 
-## TL;DR — qué hacer esta semana
-
-- [Acción concreta 1 — específica y aplicable]
-- [Acción concreta 2]
-- [Acción concreta 3]
-
-## Lo más importante (NUEVO)
-
-(1 a 3 pieces que más rinden — síntesis y por qué importa. NO listado seco — escribir 2-3 oraciones por item.)
-
-## Actualizado desde el último reporte
-
-(Items que ya habíamos visto pero cambiaron — pub_date actualizado o nueva versión. Si no hay, omitir esta sección.)
-
-## Por fuente
-
-### Anthropic oficial
-- [NUEVO] [Título](url) — síntesis 2-3 líneas · acción: leé / mirá / FYI
-
-### Simon Willison
-- ...
-
-### Geoffrey Huntley
-- ...
-
-### Armin Ronacher
-- ...
-
-### Reddit (r/ClaudeAI, r/LocalLLaMA)
-- ...
-
-### HackerNews
-- ...
-
-### MCP spec
-- ...
-
-### X / Twitter
-- ... (o sección "cobertura limitada (sin API)" si <3 resultados)
-
-## Cambios a considerar para el curso
-
-(Mapear cada novedad relevante → lección de `curso.html` que tocaría revisar.
-Ejemplo: "Anthropic anunció permission mode X → revisar L6 (Permisos)".
-Si no aplica esta semana, escribir: "Sin cambios necesarios al curso esta semana.")
-
-## Fuentes no disponibles
-
-(Solo aparece si alguna falló. Listar: nombre de la fuente, qué error, posible causa.
-El ledger NO se actualizó para esas fuentes — se reintentarán la próxima.)
-
-## Para practicar esta semana
-
-- Sugerencia 1: ejercicio concreto en <30 min basado en alguna novedad
-- Sugerencia 2: otra sugerencia accionable
-
----
-*Ledger actualizado: N items agregados / M actualizados. Total acumulado: T items.*
-```
-
-**Caso B — sin items NUEVO ni ACTUALIZADO**:
-
-Escribir reporte mínimo:
-
-```markdown
-# Update Harness Engineering · YYYY-MM-DD
-
-**Sin novedades nuevas** desde la última corrida (YYYY-MM-DD HH:MM UTC).
-
-Las fuentes canónicas no publicaron nada nuevo en la ventana de los últimos 7 días que no esté ya en el ledger.
-
-Último reporte con novedades reales: [reports/YYYY-MM-DD-update.md](reports/YYYY-MM-DD-update.md)
-
-## Fuentes consultadas
-- ✓ Anthropic · ✓ Willison · ✓ Huntley · ✓ Ronacher · ✓ Reddit · ✓ HN · ✓ MCP spec · ✓ X
-
-(Si alguna falló, listarla acá en vez del ✓. El ledger NO se actualizó para fuentes que fallaron — se reintentarán.)
-```
+**Caso B — sin items NUEVO ni ACTUALIZADO**. Llenar el template con:
+- `{{H1}}` → `Update Harness Engineering · YYYY-MM-DD`
+- `{{SUBTITULO}}` → `Sin novedades nuevas desde la última corrida (YYYY-MM-DD HH:MM UTC)`
+- `{{CONTENIDO}}` → un `<div class="callout ok">` explicando que las fuentes canónicas no publicaron nada nuevo en la ventana que no esté ya en el ledger, un link al último reporte con novedades reales, y un `<h2>Fuentes consultadas</h2>` con la lista (✓ por fuente OK, ⚠ + error por fuente fallida).
+- `{{FOOTER}}` → `Sin cambios en el ledger.`
 
 ### Paso 9 · Actualizar el ledger
 
@@ -258,7 +198,7 @@ Escribir `reports/_ledger.json` (sobreescribir el anterior).
 
 6. **Output al usuario en el chat (después de escribir el reporte)**:
    ```
-   ✓ Reporte generado: reports/YYYY-MM-DD-update.md
+   ✓ Reporte generado: reports/YYYY-MM-DD-update.html (abrilo en el browser)
 
    TL;DR esta semana:
    - [Acción 1]

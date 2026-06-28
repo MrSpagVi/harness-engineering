@@ -1,7 +1,375 @@
 {
   "schema_version": 1,
-  "last_run_utc": "2026-05-22T16:20:21Z",
+  "last_run_utc": "2026-06-27T23:10:00Z",
   "items": {
+    "https://www.anthropic.com/news/introducing-claude-tag": {
+      "title": "Introducing Claude Tag",
+      "source": "anthropic",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-23",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://support.claude.com/en/articles/14328960-identity-verification-on-claude": {
+      "title": "Identity verification on Claude",
+      "source": "anthropic",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-21",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://code.claude.com/docs/en/whats-new/2026-w26": {
+      "title": "Claude Code Week 26 (v2.1.185-193): claude mcp login/logout, shell mode responds, /rewind before /clear",
+      "source": "anthropic",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-26",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://code.claude.com/docs/en/whats-new/2026-w25": {
+      "title": "Claude Code Week 25 (v2.1.178-183): Artifacts, Tool(param:value) deny rules, /config key=value, auto mode blocks destructive git",
+      "source": "anthropic",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-19",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/26/hack-my-ai-assistant/": {
+      "title": "What happened after 2,000 people tried to hack my AI assistant",
+      "source": "willison",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-26",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/26/incident-report/": {
+      "title": "Incident Report: CVE-2026-LGTM",
+      "source": "willison",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-26",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/26/timothy-b-lee/": {
+      "title": "Quoting Timothy B. Lee",
+      "source": "willison",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-26",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/25/ai-and-liability/": {
+      "title": "AI and Liability",
+      "source": "willison",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-25",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/26/openai/": {
+      "title": "Quoting OpenAI (GPT-5.6 Sol/Terra/Luna)",
+      "source": "willison",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-26",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/26/dean-w-ball/": {
+      "title": "Quoting Dean W. Ball",
+      "source": "willison",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-26",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://ghuntley.com/miami/": {
+      "title": "Miami interview: coding vs engineering in an AI-abundant world",
+      "source": "huntley",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-26",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://lucumr.pocoo.org/2026/6/23/the-coming-loop/": {
+      "title": "The Coming Loop",
+      "source": "ronacher",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-23",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://www.reuters.com/world/china/anthropic-says-alibaba-illicitly-extracted-claude-ai-model-capabilities-2026-06-24/": {
+      "title": "Anthropic says Alibaba illicitly extracted Claude AI model capabilities",
+      "source": "hn",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-24",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://patrickmccanna.net/the-text-in-claude-codes-extended-thinking-output-is-not-authentic/": {
+      "title": "The text in Claude Code's Extended Thinking output is not authentic",
+      "source": "hn",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-22",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://github.com/raiyanyahya/recall": {
+      "title": "Show HN: Recall - Local project memory for Claude Code",
+      "source": "hn",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-21",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://github.com/workweave/router": {
+      "title": "Show HN: Smart model routing directly in Claude, Codex and Cursor",
+      "source": "hn",
+      "first_seen": "2026-06-27T23:10:00Z",
+      "last_seen": "2026-06-27T23:10:00Z",
+      "pub_date": "2026-06-26",
+      "covered_in_report": "reports/2026-06-27-update.md"
+    },
+    "https://www.anthropic.com/news/seoul-office-partnerships-korean-ai-ecosystem": {
+      "title": "Anthropic opens Seoul office and Korean AI partnerships",
+      "source": "anthropic",
+      "first_seen": "2026-06-19T00:45:00Z",
+      "last_seen": "2026-06-19T00:45:00Z",
+      "pub_date": "2026-06-17",
+      "covered_in_report": "reports/2026-06-18-update.md"
+    },
+    "https://www.anthropic.com/news/anthropic-public-record": {
+      "title": "Results from the first Anthropic Public Record",
+      "source": "anthropic",
+      "first_seen": "2026-06-19T00:45:00Z",
+      "last_seen": "2026-06-19T00:45:00Z",
+      "pub_date": "2026-06-12",
+      "covered_in_report": "reports/2026-06-18-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/17/glm-52/": {
+      "title": "GLM-5.2 is probably the most powerful text-only open weights LLM",
+      "source": "willison",
+      "first_seen": "2026-06-19T00:45:00Z",
+      "last_seen": "2026-06-19T00:45:00Z",
+      "pub_date": "2026-06-17",
+      "covered_in_report": "reports/2026-06-18-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/14/why-ai-hasnt-replaced-software-engineers/": {
+      "title": "Why AI hasn't replaced software engineers, and won't",
+      "source": "willison",
+      "first_seen": "2026-06-19T00:45:00Z",
+      "last_seen": "2026-06-19T00:45:00Z",
+      "pub_date": "2026-06-14",
+      "covered_in_report": "reports/2026-06-18-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/16/georgi-gerganov/": {
+      "title": "Quoting Georgi Gerganov (Qwen3.6-27B local coding)",
+      "source": "willison",
+      "first_seen": "2026-06-19T00:45:00Z",
+      "last_seen": "2026-06-19T00:45:00Z",
+      "pub_date": "2026-06-16",
+      "covered_in_report": "reports/2026-06-18-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/15/datasette-agent/": {
+      "title": "datasette-agent 0.3a0 (execute_write_sql with approval)",
+      "source": "willison",
+      "first_seen": "2026-06-19T00:45:00Z",
+      "last_seen": "2026-06-19T00:45:00Z",
+      "pub_date": "2026-06-15",
+      "covered_in_report": "reports/2026-06-18-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/18/datasette-apps/": {
+      "title": "Datasette Apps: Host custom HTML applications inside Datasette",
+      "source": "willison",
+      "first_seen": "2026-06-19T00:45:00Z",
+      "last_seen": "2026-06-19T00:45:00Z",
+      "pub_date": "2026-06-18",
+      "covered_in_report": "reports/2026-06-18-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/16/fable-5-export-controls/": {
+      "title": "The Fable 5 Export Controls Harm US Cyber Defense (Kate Moussouris)",
+      "source": "willison",
+      "first_seen": "2026-06-19T00:45:00Z",
+      "last_seen": "2026-06-19T00:45:00Z",
+      "pub_date": "2026-06-16",
+      "covered_in_report": "reports/2026-06-18-update.md"
+    },
+    "https://blog.modelcontextprotocol.io/posts/enterprise-managed-auth/": {
+      "title": "Enterprise-Managed Authorization (Zero-Touch OAuth) for MCP",
+      "source": "mcp",
+      "first_seen": "2026-06-19T00:45:00Z",
+      "last_seen": "2026-06-19T00:45:00Z",
+      "pub_date": "2026-06-18",
+      "covered_in_report": "reports/2026-06-18-update.md"
+    },
+    "https://github.com/evanklem/polypore": {
+      "title": "Agentic coding deserves more than a chat box bolted onto VS Code (polypore)",
+      "source": "hn",
+      "first_seen": "2026-06-19T00:45:00Z",
+      "last_seen": "2026-06-19T00:45:00Z",
+      "pub_date": "2026-06-17",
+      "covered_in_report": "reports/2026-06-18-update.md"
+    },
+    "https://news.ycombinator.com/item?id=48546618": {
+      "title": "Anthropic pauses credit change for Claude Code",
+      "source": "hn",
+      "first_seen": "2026-06-19T00:45:00Z",
+      "last_seen": "2026-06-19T00:45:00Z",
+      "pub_date": "2026-06-15",
+      "covered_in_report": "reports/2026-06-18-update.md"
+    },
+    "https://www.anthropic.com/news/fable-mythos-access": {
+      "title": "Statement on US government directive to suspend access to Fable 5 and Mythos 5",
+      "source": "anthropic",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-12",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://www.anthropic.com/news/claude-corps": {
+      "title": "Introducing Claude Corps",
+      "source": "anthropic",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-11",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://www.anthropic.com/research/making-claude-a-chemist": {
+      "title": "Making Claude a Chemist",
+      "source": "anthropic",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-14",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://www.anthropic.com/news/tcs-anthropic-partnership": {
+      "title": "TCS and Anthropic partner to bring Claude to regulated industries",
+      "source": "anthropic",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-12",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://www.anthropic.com/news/dxc-anthropic-alliance": {
+      "title": "DXC will integrate Claude into systems regulated industries rely on",
+      "source": "anthropic",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-11",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://code.claude.com/docs/en/whats-new/2026-w24": {
+      "title": "Claude Code Week 24 (v2.1.166-176): /cd, nested sub-agents, --safe-mode, fallbackModel",
+      "source": "anthropic",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-12",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://code.claude.com/docs/en/whats-new/2026-w23": {
+      "title": "Claude Code Week 23 (v2.1.158-165): auto mode on Bedrock/Vertex/Foundry, safer edits",
+      "source": "anthropic",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-05",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://code.claude.com/docs/en/whats-new/2026-w22": {
+      "title": "Claude Code Week 22 (v2.1.150-157): Opus 4.8 new default, dynamic workflows, security-guidance plugin",
+      "source": "anthropic",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-05-29",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/9/claude-fable-5/": {
+      "title": "Initial impressions of Claude Fable 5",
+      "source": "willison",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-09",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/11/fable-is-relentlessly-proactive/": {
+      "title": "Claude Fable is relentlessly proactive",
+      "source": "willison",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-11",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/10/if-claude-fable-stops-helping-you/": {
+      "title": "If Claude Fable stops helping you, you'll never know",
+      "source": "willison",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-10",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/11/anthropic-walks-back-policy/": {
+      "title": "Anthropic Walks Back Policy That Could Have 'Sabotaged' AI Researchers",
+      "source": "willison",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-11",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://simonwillison.net/2026/Jun/10/datasette-agent/": {
+      "title": "datasette-agent 0.2a0",
+      "source": "willison",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-10",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://lucumr.pocoo.org/2026/6/13/americans-only/": {
+      "title": "Dangerous Technology For Americans Only",
+      "source": "ronacher",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-13",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://lucumr.pocoo.org/2026/6/10/gaslighting/": {
+      "title": "Gaslighting Openness",
+      "source": "ronacher",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-10",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://news.ycombinator.com/item?id=48542100": {
+      "title": "Ask HN: Has anyone replaced Claude/GPT with a local model for daily coding?",
+      "source": "hn",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-15",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://ikyle.me/blog/2026/how-to-setup-a-local-coding-agent-on-macos": {
+      "title": "How to setup a local coding agent on macOS",
+      "source": "hn",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-12",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://www.endorlabs.com/learn/claude-fable-5-mythos-grade-hype": {
+      "title": "Claude Fable 5: mid-tier results on coding tasks",
+      "source": "hn",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-11",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
+    "https://github.com/anthropics/claude-code/issues/29045": {
+      "title": "Claude Desktop spawns 1.8 GB Hyper-V VM on every launch",
+      "source": "hn",
+      "first_seen": "2026-06-17T00:35:00Z",
+      "last_seen": "2026-06-17T00:35:00Z",
+      "pub_date": "2026-06-10",
+      "covered_in_report": "reports/2026-06-16-update.md"
+    },
     "https://www.anthropic.com/news/anthropic-acquires-stainless": {
       "title": "Anthropic acquires Stainless",
       "source": "anthropic",
@@ -151,7 +519,35 @@
     "managed-agents-mcp-tunnels",
     "stainless-acquisition",
     "semble-mcp-code-search",
-    "gemini-3.5-flash"
+    "gemini-3.5-flash",
+    "fable-5-mythos-5-release",
+    "fable-mythos-us-export-suspension",
+    "silent-guardrails-controversy",
+    "opus-4.8-new-default",
+    "dynamic-workflows",
+    "nested-subagents",
+    "safe-mode-flag",
+    "cd-command",
+    "fallback-model-chains",
+    "local-coding-agents-trend",
+    "mcp-enterprise-managed-auth",
+    "glm-5.2-open-weights",
+    "qwen-3.6-local-coding",
+    "approval-before-write-pattern",
+    "claude-code-credit-change-paused",
+    "verification-bottleneck-thesis",
+    "prompt-injection-challenge-2000-people",
+    "the-coming-loop-ronacher",
+    "extended-thinking-not-authentic",
+    "claude-mcp-login-cli",
+    "shell-mode-responds-to-output",
+    "tool-param-value-deny-rules",
+    "claude-artifacts-shareable",
+    "claude-tag",
+    "identity-verification-anthropic",
+    "alibaba-distillation-claim",
+    "gpt-5.6-series",
+    "recall-local-project-memory"
   ],
   "failed_sources_last_run": [
     {

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investigación: Hermes Agent + orquestación multi-LLM</title>
+<style>
+  :root{
+    --bg:#0f1419; --card:#1a2027; --elev:#232b35; --border:#2d3743;
+    --tx:#e6e9ef; --tx2:#9ba5b3; --acc:#d95c41;
+    --ok:#4ade80; --warn:#fbbf24; --info:#60a5fa; --code:#11151c; --danger:#f87171;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--tx);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.7}
+  .wrap{max-width:860px; margin:0 auto; padding:48px 24px 90px}
+  header.rep{border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:8px}
+  h1{font-size:2rem; line-height:1.25; margin:0 0 6px}
+  h1 .acc{color:var(--acc)}
+  .sub{color:var(--tx2); font-size:.92rem; font-style:italic}
+  h2{font-size:1.4rem; margin:42px 0 14px; padding-bottom:6px; border-bottom:1px solid var(--border)}
+  h3{font-size:1.08rem; margin:24px 0 8px; color:var(--acc)}
+  a{color:var(--info); text-decoration:none} a:hover{text-decoration:underline}
+  p{margin:10px 0} ul,ol{padding-left:22px} li{margin:7px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:4px;
+    font-family:'SF Mono',Monaco,'Cascadia Code',monospace; font-size:.85em}
+  pre{background:var(--code); border:1px solid var(--border); border-radius:8px;
+    padding:14px 16px; overflow-x:auto; font-size:.82rem; line-height:1.5}
+  pre code{background:none; padding:0}
+  .tldr{background:var(--elev); border-left:3px solid var(--acc); border-radius:8px; padding:14px 18px; margin:18px 0}
+  .callout{border-radius:8px; padding:12px 16px; margin:16px 0; background:var(--card)}
+  .callout.tip{border-left:3px solid var(--info)}
+  .callout.warn{border-left:3px solid var(--warn)}
+  .callout.ok{border-left:3px solid var(--ok)}
+  .callout.danger{border-left:3px solid var(--danger)}
+  .callout .lbl{display:block; font-size:.72rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:.04em; margin-bottom:4px; color:var(--tx2)}
+  table{border-collapse:collapse; width:100%; margin:16px 0; font-size:.9rem}
+  th,td{border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top}
+  th{background:var(--elev); color:var(--tx)}
+  .rec{color:var(--ok); font-weight:700}
+  .meta-foot{margin-top:48px; padding-top:16px; border-top:1px solid var(--border); color:var(--tx2); font-size:.85rem}
+  .src{font-size:.85rem; color:var(--tx2)}
+  .pill{display:inline-block; font-size:.7rem; font-weight:700; padding:1px 7px; border-radius:10px; margin-right:6px}
+  .pill.of{background:rgba(74,222,128,.15); color:var(--ok)}
+  .pill.seo{background:rgba(251,191,36,.15); color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="rep">
+  <h1>Investigación: <span class="acc">Hermes Agent</span> + orquestación multi-LLM para abaratar tokens</h1>
+  <p class="sub">2026-06-27 · Para JV · Fuentes: GitHub oficial de Nous Research, docs oficiales, DeepClaude, búsquedas web (junio 2026). Nivel de confianza marcado por sección.</p>
+</header>
+
+<div class="tldr">
+  <strong>TL;DR — las respuestas cortas</strong>
+  <ul>
+    <li><strong>Qué es</strong>: Hermes Agent (Nous Research, open-source, feb 2026) es un agente que vive en un servidor y te habla por <strong>Discord/Telegram</strong>. Soporta <strong>200+ modelos</strong> (Claude, GPT, Gemini, DeepSeek, GLM/z.ai…) y puede lanzar <strong>sub-agentes en paralelo</strong> = varias líneas de proyecto a la vez.</li>
+    <li><strong>El loop que viste</strong> (abaratar tokens): un modelo caro e inteligente <strong>planea y revisa</strong>, un modelo barato (DeepSeek/GLM) hace el <strong>bulk de escritura</strong>, y se itera con feedback hasta cumplir el objetivo. Ahorro reportado ~<strong>56%</strong> ($0.19 vs $0.43 por tarea) con <em>mejor</em> accuracy.</li>
+    <li><strong>Hosting</strong>: <span class="rec">VPS barato gana</span> (Hostinger/Contabo, ~$5/mes, 1 vCPU/1GB alcanza porque el LLM corre por API). NO necesitás Mac mini ni dejar tu compu prendida 24/7.</li>
+    <li><strong>Discord vs Telegram</strong>: Discord = varios canales = varias líneas de proyecto aisladas. Telegram = una conversación lineal. Hermes maneja ambas desde un solo proceso gateway.</li>
+    <li><strong>Caveat grande</strong>: el ahorro viene del <strong>routing por modelo</strong>, no del multi-agente. Mal configurado, un sistema multi-agente gasta <em>1-2 órdenes de magnitud MÁS</em> tokens. La disciplina (exit conditions, budgets) es lo que lo hace barato.</li>
+  </ul>
+</div>
+
+<h2>1 · Qué es Hermes Agent (en su totalidad) <span class="pill of">fuente oficial</span></h2>
+<p>Hermes Agent es el agente de IA <strong>open-source y self-improving</strong> de <a href="https://github.com/NousResearch/hermes-agent">Nous Research</a> (lanzado febrero 2026). La idea central: en vez de abrir una terminal cada vez, el agente <strong>corre permanentemente en un host</strong> (tu compu, un VPS, Docker) y te llega por una app de mensajería. Es un competidor del estilo "agente personal 24/7".</p>
+
+<p>Lo que lo distingue de Claude Code "pelado":</p>
+<ul>
+  <li><strong>Learning loop incorporado</strong>: <em>"the only agent with a built-in learning loop — it creates skills from experience, improves them during use."</em> Crea sus propias skills tras tareas complejas y las mejora con el uso.</li>
+  <li><strong>Memoria persistente de 3 niveles</strong>: búsqueda full-text (FTS5) de sesiones + resumen por LLM para recall entre sesiones + modelado del usuario (te "conoce" más con el tiempo). Esto es lo que <code>CLAUDE.md</code> + auto memory hacen en Claude Code, pero más automático.</li>
+  <li><strong>200+ backends LLM</strong>: Nous Portal, OpenRouter (200+ modelos), DeepSeek, z.ai/GLM, Kimi/Moonshot, MiniMax, NVIDIA NIM, OpenAI, Gemini, Hugging Face, o tu propio endpoint. Se cambia con <code>hermes model</code> — sin tocar código.</li>
+  <li><strong>40+ tools</strong>: web search, generación de imágenes, acceso a terminal, browser automation, etc.</li>
+  <li><strong>Gateway multi-plataforma</strong>: Telegram, Discord, Slack, WhatsApp, Signal, email y CLI — <strong>todo desde un solo proceso</strong>.</li>
+  <li><strong>6 backends de ejecución</strong>: local, Docker, SSH, Daytona, Singularity, Modal.</li>
+  <li><strong>Multi-agente</strong>: orquestador + workers (research, implementation, review, QA), cada worker con su propio contexto y tools, devolviendo un artefacto verificable.</li>
+</ul>
+
+<div class="callout warn">
+  <span class="lbl">Confianza de fuentes — leelo</span>
+  Las fuentes <strong>confiables</strong> son el <a href="https://github.com/NousResearch/hermes-agent">repo de GitHub de Nous Research</a> y los <a href="https://hermes-agent.nousresearch.com/docs/">docs oficiales</a>. Hay <strong>muchísimo contenido SEO</strong> alrededor (blogs tipo "hermes-agent.ai", "hermes-agent.org", Medium con títulos "GRATIS con DeepSeek V4") que exagera o inventa. Tratalos como pistas, no como verdad. Cualquier claim de "gratis" es clickbait: DeepSeek es <em>barato</em>, no gratis.
+</div>
+
+<h2>2 · El patrón estrella: loop multi-LLM para abaratar tokens <span class="pill of">verificado</span></h2>
+<p>Esto es lo que viste en el video. El nombre genérico del patrón es <strong>"orchestrator routing"</strong> o <strong>"DeepClaude"</strong>. Hay dos variantes y conviene no confundirlas:</p>
+
+<h3>Variante A — DeepClaude clásico (razonar barato, ejecutar caro)</h3>
+<p>Según <a href="https://dev.to/onsen/deepclaude-claude-code-deepseek-v3-pro-agent-loop-26je">DeepClaude</a>: <strong>DeepSeek razona</strong> (genera un "thinking trace": descompone el problema, identifica edge cases, arma el plan) y le pasa ese contexto a <strong>Claude Code que ejecuta</strong> (abre archivos, escribe, corre tests, se auto-corrige en loop). Acá Claude es a la vez ejecutor y revisor vía su propio agent loop.</p>
+
+<h3>Variante B — Cost-first (planear/revisar caro, escribir barato) ← la que te interesa</h3>
+<p>La que optimiza factura: un modelo <strong>caro e inteligente</strong> (Opus 4.8) actúa de <strong>orquestador</strong> — planea y revisa — y rutea el <strong>bulk de escritura de código</strong> a un modelo barato (DeepSeek o GLM). Pagás tarifa cara por pocas decisiones de alto nivel, y tarifa barata por el grueso de los tokens generados. El loop: orquestador define objetivo → worker barato escribe → orquestador revisa contra el objetivo → da feedback → worker corrige → repite hasta cumplir (con un máximo de iteraciones).</p>
+
+<div class="callout tip">
+  <span class="lbl">Números reportados (DeepClaude, refactoring)</span>
+  <strong>$0.19/tarea vs $0.43</strong> usando solo Claude → ~<strong>56% más barato</strong>. Y <em>mejor</em> accuracy: <strong>89%</strong> (híbrido) vs 74% (Claude solo) vs 61% (DeepSeek solo). El trade-off es tiempo: 6.1 min vs 4.2 min. Verificá estos números en tu propio eval set — vienen de un benchmark puntual, no son ley.
+</div>
+
+<p><strong>Por qué funciona</strong>: explota la capacidad de cada modelo. Razonar/arquitectura/revisar (alto valor, pocos tokens) → modelo caro. Escribir boilerplate/implementar (mucho volumen, bajo valor por token) → modelo barato. Es la regla del 80/20 de la L15 del curso, aplicada entre proveedores.</p>
+
+<div class="callout danger">
+  <span class="lbl">La paradoja multi-agente (no la ignores)</span>
+  Los sistemas multi-agente suelen consumir <strong>1 a 2 órdenes de magnitud MÁS tokens</strong> que un agente solo: cada loop re-invoca planning, generación y reflexión, acumulando contextos largos. El ahorro NO viene de "usar varios agentes" — viene de <strong>rutear el volumen a un modelo barato</strong> y de <strong>cortar el loop</strong> con exit conditions. Sin disciplina, este patrón te sale MÁS caro, no menos.
+</div>
+
+<h2>3 · Cómo se conectan los distintos modelos (Claude, GPT, Gemini, DeepSeek, GLM)</h2>
+<p>Hermes abstrae el proveedor. La vía más simple para tener "todos los modelos" con una sola API key es <strong>OpenRouter</strong> (un proxy que expone 200+ modelos detrás de una key). Alternativamente conectás cada proveedor directo (más barato por token, más config).</p>
+<ul>
+  <li><strong>Cambiar de modelo</strong>: <code>hermes model</code> — sin cambios de código, sin lock-in. Podés cambiar de DeepSeek a Claude a un modelo local con un cambio de config a mitad de workflow.</li>
+  <li><strong>Routing por rol</strong> (el corazón del ahorro): asignás modelo distinto al orquestador vs a los workers. Orquestador = Opus 4.8 / razonador fuerte; workers de implementación = DeepSeek o GLM-4.6 (z.ai, muy barato para coding).</li>
+  <li><strong>GLM/z.ai</strong> y <strong>DeepSeek</strong> son los favoritos "baratos para coding" del ecosistema 2026. Gemini Flash para velocidad. GPT para tareas donde rinda mejor en tu eval.</li>
+</ul>
+
+<h2>4 · Discord vs Telegram — múltiples líneas de proyecto</h2>
+<p>Tu intuición es correcta. La diferencia operativa:</p>
+<table>
+  <thead><tr><th>Aspecto</th><th>Telegram</th><th>Discord</th></tr></thead>
+  <tbody>
+    <tr><td>Estructura</td><td>Chats lineales (1 conversación = 1 hilo largo)</td><td>Servidor con <strong>múltiples canales</strong> + threads</td></tr>
+    <tr><td>Líneas de proyecto</td><td>Cuesta separar: todo se mezcla en una sesión consecutiva</td><td><span class="rec">Un canal por proyecto</span> → contextos aislados en paralelo</td></tr>
+    <tr><td>Sub-agentes paralelos</td><td>Posible pero confuso de seguir</td><td>Encaja natural: cada canal/thread = un workstream</td></tr>
+    <tr><td>Setup</td><td>Más simple (un bot token, andá)</td><td>Un poco más (server + bot + permisos de canal)</td></tr>
+  </tbody>
+</table>
+<p>Hermes corre <strong>ambas desde el mismo proceso gateway</strong>, así que no elegís una para siempre. Para lo que querés —<strong>varias líneas de proyecto sin que se pisen</strong>— Discord es la mejor opción, apoyándose en que Hermes puede <em>"spawn isolated subagents for parallel workstreams, each getting its own conversation and terminal."</em></p>
+
+<h2>5 · Dónde correrlo: tu compu vs VPS vs Mac mini</h2>
+<table>
+  <thead><tr><th>Opción</th><th>Pros</th><th>Contras</th><th>Veredicto</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Tu compu</strong></td>
+      <td>Costo $0, ya la tenés</td>
+      <td>No 24/7 (vos misma dijiste que no la dejás prendida), consume recursos, IP cambia, si la apagás el agente muere a mitad de tarea</td>
+      <td>Solo para probar/aprender</td>
+    </tr>
+    <tr>
+      <td class="rec">VPS barato</td>
+      <td>24/7, ~$5/mes, IP fija, no toca tu compu. <strong>1 vCPU / 1 GB alcanza</strong> porque el LLM corre por API (el VPS solo orquesta). Hostinger, Contabo, Hetzner</td>
+      <td>Hay que saber un mínimo de Linux/SSH (te lo puedo guiar)</td>
+      <td><span class="rec">La opción recomendada</span></td>
+    </tr>
+    <tr>
+      <td>Mac mini dedicado</td>
+      <td>Hardware tuyo, bueno si querés correr <em>modelos locales</em></td>
+      <td>Caro (cientos de USD), electricidad, overkill si el LLM es por API. La gente lo usa por moda o para inferencia local</td>
+      <td>No vale la pena para tu caso</td>
+    </tr>
+  </tbody>
+</table>
+<div class="callout tip">
+  <span class="lbl">Clave que casi nadie aclara</span>
+  Si tus modelos corren por <strong>API</strong> (Claude, DeepSeek, GLM en la nube), el host solo necesita orquestar texto → un VPS mínimo sobra. El Mac mini / GPU solo tiene sentido si querés correr el modelo <strong>localmente</strong> (privacidad o costo cero de inferencia, a cambio de calidad menor). Para empezar: VPS + APIs.
+</div>
+
+<h2>6 · Optimización de tokens — explotar cada modelo por su capacidad</h2>
+<p>Resumen operativo de todo lo anterior, como checklist:</p>
+<ol>
+  <li><strong>Routing por rol</strong>: caro para planear/revisar, barato para el bulk. Es la palanca #1.</li>
+  <li><strong>Exit conditions explícitas</strong>: <em>"iterá hasta que pasen todos los tests, máximo N iteraciones"</em>. Sin esto, el loop se desboca y el ahorro desaparece.</li>
+  <li><strong>Context budgeting</strong>: limitar cuánto contexto arrastra cada handoff entre modelos (el middleware de DeepClaude lo hace).</li>
+  <li><strong>Zero-context-cost turns</strong>: Hermes deja escribir <em>scripts Python que llaman tools vía RPC</em>, colapsando pipelines multi-step en un turno sin costo de contexto. (Es el patrón "code-over-tools" / Ubertools de Ronacher — está en la L10/L13 del curso.)</li>
+  <li><strong>Prompt caching</strong>: mantené estable la parte fija del prompt (system, instrucciones) para pagar solo el delta (L15 del curso).</li>
+  <li><strong>Modelo mínimo viable por tarea</strong>: no uses Opus para lo que GLM resuelve. Subí solo cuando tu eval muestre que el barato no llega.</li>
+</ol>
+
+<h2>7 · Setup paso a paso (camino recomendado)</h2>
+<div class="callout warn">
+  <span class="lbl">Antes de seguir</span>
+  Estos pasos son la <strong>síntesis</strong> de los docs oficiales + guías de la comunidad. Los comandos exactos pueden cambiar entre versiones — confirmá siempre contra <a href="https://hermes-agent.nousresearch.com/docs/">los docs oficiales</a> al momento de instalar. No corras scripts de blogs random sin leerlos.
+</div>
+<ol>
+  <li><strong>Conseguí un VPS</strong> (Hostinger/Contabo, plan más chico, Ubuntu). Entrá por SSH.</li>
+  <li><strong>Requisitos</strong>: Git + Python 3.11+ (en Windows el instalador trae uv, Python, Node, ripgrep, ffmpeg y Git Bash portable).</li>
+  <li><strong>Instalá Hermes</strong>: script de instalación para Linux/macOS/WSL2 (o el desktop installer en Win/Mac).</li>
+  <li><strong>Autenticá</strong>: <code>hermes setup --portal</code> — una credencial OAuth cubre acceso a modelos + tools (web search, imágenes, TTS, browser).</li>
+  <li><strong>Configurá modelos</strong>: agregá tu key de OpenRouter (camino fácil) o keys directas de DeepSeek/Anthropic/z.ai. Definí el routing por rol (orquestador caro, workers baratos).</li>
+  <li><strong>Conectá Discord</strong>: creá un bot en el Discord Developer Portal, copiá el token, configuralo en el gateway de Hermes, invitá el bot a tu server. Un canal por proyecto.</li>
+  <li><strong>Probá chico</strong>: una tarea simple end-to-end antes de armar el loop multi-modelo. Verificá costos con tareas reales.</li>
+</ol>
+
+<h3>Alternativa más simple si te asusta el VPS: DeepClaude con Docker</h3>
+<p>Si solo querés el <em>loop Claude+DeepSeek</em> sin todo Hermes: cloná DeepClaude, copiá <code>.env.example</code> → <code>.env</code>, agregá las keys de Anthropic y DeepSeek, seteá el token budget, y <code>docker compose up</code>. Más acotado, ideal para entender el patrón antes de escalar a Hermes.</p>
+
+<h2>8 · Plan de acción concreto para vos</h2>
+<ol>
+  <li><strong>Fase 0 — entender el loop (local, 1 tarde)</strong>: probá DeepClaude con Docker en tu compu. Objetivo: ver el ahorro real en una tarea tuya. Cero compromiso de infra.</li>
+  <li><strong>Fase 1 — VPS mínimo</strong>: si te cierra, levantá un VPS de $5 e instalá Hermes. Conectá Telegram primero (más simple) con UN modelo.</li>
+  <li><strong>Fase 2 — multi-modelo + Discord</strong>: agregá routing por rol (Opus 4.8 orquesta, DeepSeek/GLM escriben) y migrá a Discord con un canal por proyecto.</li>
+  <li><strong>Fase 3 — medí</strong>: armá un mini eval set (5-10 tareas tuyas) y compará costo/calidad Hermes-loop vs Claude Code solo. Decidí con datos, no con el video.</li>
+</ol>
+<div class="callout ok">
+  <span class="lbl">Conexión con tu harness actual</span>
+  Esto NO reemplaza Claude Code para tu trabajo diario — es una herramienta para <strong>proyectos donde el volumen de código generado es alto y el costo importa</strong> (ej: SpagBook features grandes). Las skills que instalaste (<code>grill-me → to-prd → to-issues → tdd</code>) son el "plan" que un orquestador Hermes podría ejecutar ruteando el <code>/tdd</code> a un modelo barato. Mismo mindset, otra capa.
+</div>
+
+<h2>9 · Riesgos y cosas que verificar</h2>
+<ul>
+  <li><strong>Seguridad (lethal trifecta, L6)</strong>: un agente 24/7 con acceso a tu código + internet + comunicación externa es la trifecta completa. Corré en VPS aislado, con keys de bajo privilegio y cap de gasto. Nunca tu cuenta de producción.</li>
+  <li><strong>Costo real</strong>: el multi-agente puede gastar más si el loop no tiene exit conditions. Medí desde el día 1.</li>
+  <li><strong>Calidad de fuentes</strong>: el 80% de lo que se escribe sobre Hermes es SEO. Confiá en GitHub oficial + docs.</li>
+  <li><strong>Madurez</strong>: Hermes es de feb 2026, joven. Esperá cambios de API y bugs. No lo pongas en un flujo crítico todavía.</li>
+  <li><strong>Modelos</strong>: usá <strong>Opus 4.8</strong> (default actual) como orquestador. Fable 5 está suspendida por la directiva de export control de US (junio 2026).</li>
+</ul>
+
+<h2>Fuentes</h2>
+<p class="src">
+  <span class="pill of">oficial</span> <a href="https://github.com/NousResearch/hermes-agent">github.com/NousResearch/hermes-agent</a> · <a href="https://hermes-agent.nousresearch.com/docs/">docs.nousresearch (Hermes)</a><br>
+  <span class="pill of">patrón</span> <a href="https://dev.to/onsen/deepclaude-claude-code-deepseek-v3-pro-agent-loop-26je">DeepClaude: Claude Code + DeepSeek agent loop (dev.to)</a><br>
+  <span class="pill seo">comunidad/SEO — tratar con cuidado</span> guías de setup VPS/Telegram (MindStudio, Contabo, Composio), comparativas de costo (Medium). Útiles como pistas, no verificadas al 100%.
+</p>
+
+<p class="meta-foot">Investigación sintetizada por Claude (Opus 4.8) el 2026-06-27. Confianza alta en secciones marcadas "oficial/verificado"; media en setup (síntesis de fuentes comunitarias). Para una pasada más profunda sobre cualquier sub-tema, pedí <code>/deep-research</code>.</p>
+</div>
+</body>
+</html>
