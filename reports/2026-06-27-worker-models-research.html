@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep research: modelo "worker barato" para loops multi-LLM</title>
+<style>
+  :root{
+    --bg:#0f1419; --card:#1a2027; --elev:#232b35; --border:#2d3743;
+    --tx:#e6e9ef; --tx2:#9ba5b3; --acc:#d95c41;
+    --ok:#4ade80; --warn:#fbbf24; --info:#60a5fa; --code:#11151c; --danger:#f87171;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--tx);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.7}
+  .wrap{max-width:880px; margin:0 auto; padding:48px 24px 90px}
+  header.rep{border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:8px}
+  h1{font-size:1.95rem; line-height:1.25; margin:0 0 6px}
+  h1 .acc{color:var(--acc)}
+  .sub{color:var(--tx2); font-size:.92rem; font-style:italic}
+  h2{font-size:1.4rem; margin:42px 0 14px; padding-bottom:6px; border-bottom:1px solid var(--border)}
+  h3{font-size:1.08rem; margin:24px 0 8px; color:var(--acc)}
+  a{color:var(--info); text-decoration:none} a:hover{text-decoration:underline}
+  p{margin:10px 0} ul,ol{padding-left:22px} li{margin:7px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:4px;
+    font-family:'SF Mono',Monaco,'Cascadia Code',monospace; font-size:.85em}
+  pre{background:var(--code); border:1px solid var(--border); border-radius:8px;
+    padding:14px 16px; overflow-x:auto; font-size:.82rem; line-height:1.5}
+  pre code{background:none; padding:0}
+  .tldr{background:var(--elev); border-left:3px solid var(--acc); border-radius:8px; padding:14px 18px; margin:18px 0}
+  .callout{border-radius:8px; padding:12px 16px; margin:16px 0; background:var(--card)}
+  .callout.tip{border-left:3px solid var(--info)}
+  .callout.warn{border-left:3px solid var(--warn)}
+  .callout.ok{border-left:3px solid var(--ok)}
+  .callout.danger{border-left:3px solid var(--danger)}
+  .callout .lbl{display:block; font-size:.72rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:.04em; margin-bottom:4px; color:var(--tx2)}
+  table{border-collapse:collapse; width:100%; margin:16px 0; font-size:.88rem}
+  th,td{border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top}
+  th{background:var(--elev)}
+  .rec{color:var(--ok); font-weight:700}
+  tr.win td{background:rgba(74,222,128,.08)}
+  .meta-foot{margin-top:48px; padding-top:16px; border-top:1px solid var(--border); color:var(--tx2); font-size:.85rem}
+  .src{font-size:.84rem; color:var(--tx2)}
+  .conf{font-size:.7rem; font-weight:700; padding:1px 7px; border-radius:10px; margin-left:6px}
+  .conf.h{background:rgba(74,222,128,.15); color:var(--ok)}
+  .conf.m{background:rgba(251,191,36,.15); color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="rep">
+  <h1>Deep research: el <span class="acc">"worker barato"</span> para escribir código en un loop multi-LLM</h1>
+  <p class="sub">2026-06-27 · Para JV · Harness deep-research: 5 ángulos · 21 fuentes · 103 claims extraídos · 25 verificados adversarialmente (16 confirmados, 9 refutados). Confianza marcada por finding.</p>
+</header>
+
+<div class="tldr">
+  <strong>TL;DR — la respuesta</strong>
+  <ul>
+    <li><strong>Worker por defecto: <span class="rec">DeepSeek V4-Flash</span></strong>. Ganador claro en costo: <strong>~$0.14/M input · $0.28/M output</strong> (cache hit baja input a $0.0028/M), <strong>1M de contexto</strong>, pesos MIT. En un benchmark independiente fue el <em>más rápido</em> (2m35s) y el más barato viable (~$0.01/run, Tier B 78/100).</li>
+    <li><strong>Worker "premium" cuando una feature necesita mejor código de una: GLM-4.6</strong> (Z.AI/Zhipu) — $0.43/$1.74 en OpenRouter ($0.6/$2.2 API oficial), ~203K ctx. La familia GLM lidera el coding open-weight; GLM-5.2 (jun 2026) ya superó a 4.6.</li>
+    <li><strong>Aún más barato para tareas chicas:</strong> Qwen3-Coder 30B A3B ($0.07/$0.27).</li>
+    <li><strong>Orquestador (planea + revisa):</strong> tu Opus 4.8 — confirmado como el rol correcto para el modelo caro.</li>
+    <li class="rec">Regla estructural: parametrizá el modelo por env var, NO lo hardcodees. Estos modelos rotan en semanas (V4 reemplazó V3; los slugs viejos se retiran el 2026-07-24).</li>
+  </ul>
+</div>
+
+<h2>Tabla comparativa (precios verificados contra fuentes primarias)</h2>
+<table>
+  <thead><tr><th>Modelo</th><th>Input $/M</th><th>Output $/M</th><th>Contexto</th><th>Rol sugerido</th></tr></thead>
+  <tbody>
+    <tr class="win"><td><strong>DeepSeek V4-Flash</strong></td><td>0.14 <span class="src">(0.0028 cache hit)</span></td><td>0.28</td><td>1M</td><td><span class="rec">Worker default</span></td></tr>
+    <tr><td>DeepSeek V4-Pro</td><td>0.435 <span class="src">(0.0036 cache)</span></td><td>0.87</td><td>1M</td><td>Worker premium (misma familia)</td></tr>
+    <tr><td>GLM-4.6 (Z.AI)</td><td>0.43 OR / 0.6 API</td><td>1.74 OR / 2.2 API</td><td>~203K</td><td>Worker premium (mejor calidad)</td></tr>
+    <tr><td>GLM-5.1</td><td>1.40</td><td>4.40</td><td>200K</td><td>Premium+ (AA Coding 43.4)</td></tr>
+    <tr><td>GLM-5.2</td><td colspan="2">~1.72 blended</td><td>1M</td><td>Líder open-source jun 2026 (QI 51.1)</td></tr>
+    <tr><td>Qwen3-Coder 30B A3B</td><td>0.07</td><td>0.27</td><td>160K (OR)</td><td>Tareas chicas / alto volumen</td></tr>
+    <tr><td>Qwen3-Coder 480B A35B</td><td>0.22</td><td>0.90</td><td>262K</td><td>Alternativa media</td></tr>
+  </tbody>
+</table>
+<p class="src">OR = tarifa vía OpenRouter · API = API oficial del proveedor. Precios por 1M de tokens, USD, junio 2026.</p>
+
+<h2>Hallazgos confirmados</h2>
+
+<h3>DeepSeek V4-Flash: el más barato y rápido <span class="conf h">alta · 3-0</span></h3>
+<p>~$0.14/M input (cache miss), $0.0028/M (cache hit), $0.28/M output, 1M ctx, MIT. La página oficial de pricing lo confirma carácter por carácter; corroborado por OpenRouter, morphllm, cloudzero, fireworks. En el benchmark de akitaonrails (abril 2026) fue <strong>el worker más barato viable (~$0.01/run) y el más rápido (2m35s vs 8m+ del resto)</strong>, 78/100 Tier B. Único defecto observado: escribió mal un slug de modelo que rompía el deploy.</p>
+
+<h3>El cache-hit de DeepSeek puede cambiar el cálculo <span class="conf h">alta</span></h3>
+<p>En un loop con <strong>system prompt fijo</strong> (exactamente tu caso en Hermes), el input repetido cae a <strong>$0.0028/M</strong> — dos órdenes de magnitud más barato que el cache-miss. Esto puede bajar el costo efectivo del worker dramáticamente. Es una de las preguntas abiertas a medir.</p>
+
+<h3>GLM-4.6 como escalón de calidad <span class="conf h">alta · 3-0</span></h3>
+<p>$0.43/$1.74 (OpenRouter) o $0.6/$2.2 (API oficial), 202.752 ctx, max output 128K. La familia GLM lidera SWE-Bench Verified entre open-weights y rinde bien en herramientas de agente (Claude Code, Cline, Roo Code). La paridad "con Sonnet 4" es stat de vendor — tomala con pinzas <span class="conf m">media · 2-1</span>.</p>
+
+<h3>GLM-5.1 / 5.2 ya superaron a 4.6 <span class="conf h">alta</span></h3>
+<p>GLM-5.2 encabeza el subset open-source de coding (Quality Index 51.1, ~$1.72/M, 1M ctx, MIT). VentureBeat: <em>"GLM-5.2 beats GPT-5.5 on multiple long-horizon coding benchmarks."</em> GLM-5.1: $1.40/$4.40, 200K ctx, AA Coding 43.4. Si vas a worker premium, evaluá GLM-5.2 antes que 4.6.</p>
+
+<h3>Qwen3-Coder: el piso de precio <span class="conf h">alta · 3-0</span></h3>
+<p>30B A3B Instruct a $0.07/$0.27 (160K en OpenRouter, nativo 256K), 480B A35B a $0.22/$0.90 (262K). Bueno para tareas chicas o de mucho volumen donde la calidad importa menos.</p>
+
+<div class="callout warn">
+  <span class="lbl">Cambio de slugs — no hardcodear</span>
+  Los modelos de DeepSeek ahora son <code>deepseek-v4-flash</code> y <code>deepseek-v4-pro</code>. Los viejos <code>deepseek-chat</code> (V3) y <code>deepseek-reasoner</code> <strong>se retiran el 2026-07-24</strong>. Parametrizá el modelo por variable de entorno en tu setup Hermes.
+</div>
+
+<h2>Lo que NO quedó confirmado (señales importantes)</h2>
+<div class="callout danger">
+  <span class="lbl">El patrón cheap-worker+reviewer no siempre gana</span>
+  <p>El mismo benchmark de akitaonrails <strong>argumentó que un único modelo top-tier superó a la orquestación multi-modelo</strong>, porque los workers baratos metían más bugs de lo que ahorraban en tokens. Este claim <strong>quedó refutado (0-3)</strong> en la verificación — o sea, NO está establecido como verdad — <em>pero es una señal roja</em>: el ahorro depende de tu tarea. <strong>Medí costo-vs-bugs en tu propio eval de SpagBook antes de comprometerte.</strong></p>
+</div>
+<ul>
+  <li><strong>NO uses estos números</strong> (refutados): Opus 4.8 a $5/$25 por M (0-3, dato de un blog, no oficial); Kimi K2.6 y MiniMax M3 como "top workers" (0-3 y 1-2).</li>
+  <li>Los scores agregados de benchlm.ai (84.1, 88.7) son una escala propietaria no reproducible — solo el <em>ranking direccional</em> es confiable.</li>
+</ul>
+
+<h2>Recomendación accionable para tu setup Hermes</h2>
+<ol>
+  <li><strong>Orquestador</strong> = Opus 4.8 (planea + revisa).</li>
+  <li><strong>Worker default</strong> = DeepSeek V4-Flash (costo imbatible + 1M ctx que aguanta el codebase de SpagBook entero + cache-hit barato para system prompt fijo).</li>
+  <li><strong>Worker premium</strong> = GLM-4.6 (o GLM-5.2) cuando una feature compleja necesite mejor código de una.</li>
+  <li><strong>Acceso</strong>: todos disponibles vía API directa y OpenRouter. OpenRouter = una sola key para todos (más simple); API directa = más barato por token (más config).</li>
+  <li><strong>Parametrizá por env var</strong> (ej. <code>WORKER_MODEL</code>, <code>ORCHESTRATOR_MODEL</code>) — la rotación de modelos es semanal.</li>
+  <li><strong>Cortá el loop</strong>: exit conditions ("máx 10 iteraciones o hasta tests verdes"). Sin esto, los bugs del worker barato se comen el ahorro.</li>
+</ol>
+
+<div class="callout ok">
+  <span class="lbl">Próximo paso concreto</span>
+  Antes de montar Hermes completo: corré <strong>DeepClaude con Docker</strong> (Opus 4.8 + DeepSeek V4-Flash) sobre 3-5 tareas reales de SpagBook. Medí: $/tarea, bugs introducidos, tiempo de review. Si el neto te conviene, escalás a Hermes en un VPS. Si no, te quedás con un solo modelo top-tier — y ya lo sabés con datos, no con un video.
+</div>
+
+<h2>Preguntas abiertas (lo que esta investigación no cierra)</h2>
+<ul>
+  <li>¿El neto realmente ahorra para JV, o los bugs del worker barato consumen tiempo de review de Opus y lo vuelven más caro? → eval propio.</li>
+  <li>¿Cómo rinde V4-Flash en <strong>agentic tool-use / multi-turn</strong> (lo que un loop Hermes ejercita), no solo generación one-shot? Los benchmarks citados son mayormente single-task.</li>
+  <li>¿GLM-5.2 como worker premium en lugar de 4.6? Falta comparar su output real y latencia en el rol.</li>
+  <li>¿Cuánto baja el costo efectivo el cache-hit de DeepSeek en un loop con contexto repetido?</li>
+</ul>
+
+<h2>Fuentes (por calidad)</h2>
+<p class="src">
+  <strong>Primarias</strong>: <a href="https://api-docs.deepseek.com/quick_start/pricing">DeepSeek pricing</a> · <a href="https://openrouter.ai/z-ai/glm-4.6">OpenRouter GLM-4.6</a> · <a href="https://docs.z.ai/guides/overview/pricing">Z.AI pricing</a><br>
+  <strong>Secundarias</strong>: <a href="https://pricepertoken.com/compare/provider/deepseek-vs-qwen">pricepertoken</a> · <a href="https://www.morphllm.com/llm-api">morphllm</a> · <a href="https://whatllm.org/best-open-source-llm">whatllm.org</a><br>
+  <strong>Blogs / benchmarks (direccional)</strong>: <a href="https://akitaonrails.com/en/2026/04/24/llm-benchmarks-parte-3-deepseek-kimi-mimo/">akitaonrails benchmark</a> · <a href="https://fireworks.ai/blog/best-llms-for-coding">fireworks</a> · <a href="https://www.developersdigest.tech/blog/glm-5-2-vs-deepseek-v4-vs-qwen3-open-weights-coding-showdown">developersdigest GLM-5.2 vs V4</a> · <a href="https://aider.chat/2024/09/26/architect.html">Aider architect/editor</a>
+</p>
+
+<p class="meta-foot">Generado por el harness deep-research (Opus 4.8 + verificación adversarial 3 votos/claim) el 2026-06-27. Caveat de tiempo: el mercado de modelos rota en semanas — la recomendación <em>estructural</em> (parametrizar, medir tu propio eval) pesa más que el modelo puntual.</p>
+</div>
+</body>
+</html>
