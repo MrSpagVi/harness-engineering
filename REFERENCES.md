@@ -285,6 +285,11 @@ Tracking desde Week 13 (marzo) hasta Week 26 (junio). Para detalle por semana ve
 
 ### URL
 - **5 Agent Skills I Use Every Day** — https://www.aihero.dev/5-agent-skills-i-use-every-day
+- **Learn anything with my teach skill** — https://www.aihero.dev/learn-anything-with-my-teach-skill
+
+### Repo de skills (TRACKING — revisar en cada `actualizame`)
+- **Repo oficial**: https://github.com/mattpocock/skills — chequear commits recientes / skills nuevas en `skills/productivity/` y otras carpetas. Si aparece una skill nueva relevante, reportarla en el update semanal.
+- Skills ya adoptadas a nivel usuario (`~/.claude/skills/`): `grill-me` (=grilling), `to-prd`, `to-issues`, `tdd`, `improve-codebase-architecture`, `teach`, `handoff`, `writing-great-skills`. Ver [[reference-skills-pipeline]].
 
 ### Conceptos clave (a usar en L7, L13)
 - **Tesis central**: los agentes no tienen memoria entre sesiones → encodeá tus workflows en **skills** reusables. Una skill bien hecha sube la calidad del output más que cualquier prompt suelto.

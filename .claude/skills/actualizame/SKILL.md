@@ -13,6 +13,8 @@ allowed-tools:
   - WebFetch(domain:news.ycombinator.com)
   - WebFetch(domain:hn.algolia.com)
   - WebFetch(domain:reddit.com)
+  - WebFetch(domain:github.com)
+  - WebFetch(domain:raw.githubusercontent.com)
   - WebSearch
   - Read(./REFERENCES.md)
   - Read(./reports/**)
@@ -45,6 +47,7 @@ Leer `./REFERENCES.md`. Extraer todas las URLs canónicas agrupadas por autor:
 - **Geoffrey Huntley**: ghuntley.com (probar RSS en `/rss/` o `/feed/`)
 - **Armin Ronacher**: feed Atom canónico: `https://lucumr.pocoo.org/feed.atom`
 - **MCP spec**: modelcontextprotocol.io
+- **Repos de skills (TRACKING)**: las URLs bajo la sección "Repo de skills (TRACKING)" de REFERENCES.md (hoy: github.com/mattpocock/skills)
 
 NO hardcodear URLs en esta skill — siempre leerlas de REFERENCES.md. Si en el futuro se agregan/quitan fuentes ahí, esta skill se adapta sola.
 
@@ -101,6 +104,11 @@ Guardar la fecha del último run (`last_run_utc`) — la vas a mostrar en el rep
 **MCP spec**:
 - Fetchear `https://modelcontextprotocol.io/` y buscar links a "Updates", "Changelog", o "What's new"
 - Si encontrás alguna sección de versiones recientes, parsear por fecha
+
+**Repos de skills (GitHub)** — leer las URLs de la sección "Repo de skills (TRACKING)" de REFERENCES.md (hoy: `https://github.com/mattpocock/skills`):
+- Fetchear la página del repo y mirar commits recientes / carpetas de skills (ej. `skills/productivity/`)
+- Si hay una **skill nueva** o un cambio relevante desde el último run (comparar contra el ledger), reportarla como item NUEVO (source: `github`) con link al SKILL.md
+- Filtrar ruido: solo skills/cambios sustantivos, no bumps de versión triviales
 
 **X / Twitter** (best-effort, sin API):
 - Usar `WebSearch` con query: `site:twitter.com OR site:x.com (claude code OR mcp OR anthropic) after:YYYY-MM-DD`
