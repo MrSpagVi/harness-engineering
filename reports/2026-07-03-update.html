@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Update Harness Engineering · 2026-07-03</title>
+<style>
+  :root{
+    --bg:#0f1419; --card:#1a2027; --elev:#232b35; --border:#2d3743;
+    --tx:#e6e9ef; --tx2:#9ba5b3; --acc:#d95c41;
+    --ok:#4ade80; --warn:#fbbf24; --info:#60a5fa; --code:#11151c; --danger:#f87171;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--tx);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    line-height:1.7; padding:0;
+  }
+  .wrap{max-width:820px; margin:0 auto; padding:48px 24px 80px}
+  header.rep{border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:8px}
+  h1{font-size:1.9rem; line-height:1.3; margin:0 0 6px; color:var(--tx)}
+  h1 .acc{color:var(--acc)}
+  .sub{color:var(--tx2); font-size:.92rem; font-style:italic}
+  h2{font-size:1.35rem; line-height:1.3; margin:38px 0 14px; padding-bottom:6px;
+     border-bottom:1px solid var(--border); color:var(--tx)}
+  h3{font-size:1.05rem; margin:24px 0 8px; color:var(--acc)}
+  a{color:var(--info); text-decoration:none}
+  a:hover{text-decoration:underline}
+  p{margin:10px 0}
+  ul,ol{padding-left:22px} li{margin:6px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:4px;
+       font-family:'SF Mono',Monaco,'Cascadia Code',monospace; font-size:.85em; color:#e6e9ef}
+  .tldr{background:var(--elev); border-left:3px solid var(--acc);
+        border-radius:8px; padding:14px 18px; margin:18px 0}
+  .tldr ul{margin:6px 0}
+  .badge{display:inline-block; font-size:.7rem; font-weight:700; padding:1px 7px;
+         border-radius:10px; vertical-align:middle; margin-right:6px}
+  .badge.nuevo{background:rgba(74,222,128,.15); color:var(--ok)}
+  .badge.upd{background:rgba(251,191,36,.15); color:var(--warn)}
+  .source{background:var(--card); border:1px solid var(--border);
+          border-radius:8px; padding:4px 16px 14px; margin:14px 0}
+  .callout{border-radius:8px; padding:12px 16px; margin:16px 0; background:var(--card)}
+  .callout.tip{border-left:3px solid var(--info)}
+  .callout.warn{border-left:3px solid var(--warn)}
+  .callout.ok{border-left:3px solid var(--ok)}
+  .callout.danger{border-left:3px solid var(--danger)}
+  .callout .lbl{display:block; font-size:.72rem; font-weight:700; text-transform:uppercase;
+                letter-spacing:.04em; margin-bottom:4px; color:var(--tx2)}
+  .meta-foot{margin-top:48px; padding-top:16px; border-top:1px solid var(--border);
+             color:var(--tx2); font-size:.85rem; font-style:italic}
+  .action{color:var(--tx2); font-size:.85em}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="rep">
+  <h1>Update <span class="acc">Harness Engineering</span> · 2026-07-03</h1>
+  <p class="sub">Ventana cruda: últimos 7 días (2026-06-26 → 07-03) · Filtrado contra ledger (último update: 2026-06-27 23:10 UTC)</p>
+</header>
+
+<div class="tldr">
+  <strong>TL;DR — qué hacer esta semana</strong>
+  <ul>
+    <li><strong>Probá Claude Sonnet 5</strong> (salió 30-jun) en una tarea real, pero <strong>medí el token count</strong>: el nuevo tokenizer genera ~30% más tokens, lo que sube el costo efectivo aunque el precio por token no cambie. Impacta tu aritmética de la L15.</li>
+    <li><strong>Fable 5 volvió</strong>: EE.UU. levantó los export controls (30-jun) y Anthropic la re-desplegó. Ya se puede usar, pero mantené <strong>Opus 4.8</strong> como default estable.</li>
+    <li><strong>Leé el caso de la "esteganografía" en Claude Code</strong> (2.420 pts en HN): Claude Code estaría marcando requests de forma oculta. Es un caso directo de "qué hace tu agente que vos no ves" → L6.</li>
+  </ul>
+</div>
+
+<h2>Lo más importante (NUEVO)</h2>
+<p><strong>1. Claude Sonnet 5.</strong> Nueva versión del workhorse: <strong>adaptive thinking activado por default</strong>, ventana de <strong>1M de contexto</strong>, se removieron los sampling parameters, y un <strong>tokenizer nuevo que produce ~30% más tokens</strong> que las versiones previas. Ese último punto es el que más te toca: aunque el precio por token no suba, la misma tarea "pesa" más tokens, y ya hay quejas de que Claude Code se ve "5x más caro". Antes de migrar, corré tu eval y mirá el costo real por tarea.</p>
+<p><strong>2. La controversia de la "steganographic marking".</strong> Un análisis (2.420 pts en HN) sostiene que Claude Code <strong>marca los requests de forma esteganográfica</strong> (patrones ocultos en el texto). Se cruzó con acusaciones de "código spyware-like". Sea cual sea la lectura final, es el caso pedagógico perfecto de <em>verificá lo que tu agente realmente hace, no lo que parece</em> — y de por qué el threat model importa (L6).</p>
+<p><strong>3. Presión competitiva desde GLM.</strong> Semgrep publicó que <strong>GLM 5.2 le gana a Claude en sus benchmarks de ciberseguridad</strong> (1.106 pts), y salió <strong>ZCode</strong> — un "Claude Code" hecho por los creadores de GLM (z.ai). Conecta directo con tu investigación de worker models: GLM sigue subiendo como opción barata y capaz. Otro datapoint para no hardcodear un solo proveedor.</p>
+
+<h2>Actualizado desde el último reporte</h2>
+<div class="source">
+  <ul>
+    <li><span class="badge upd">ACTUALIZADO</span> <a href="https://www.anthropic.com/news/redeploying-fable-5">Redeploying Fable 5</a> — el Departamento de Comercio de EE.UU. <strong>levantó los export controls</strong> sobre Fable 5 y Mythos 5 (30-jun); Anthropic la restauró globalmente. Revierte la suspensión que reporté el 16-jun. Sumaron también <a href="https://www.anthropic.com/news/fable-safeguards-jailbreak-framework">más detalles sobre los cyber safeguards y el jailbreak framework</a> (2-jul). <span class="action">· acción: FYI (podés usarla, pero Opus 4.8 sigue de default)</span></li>
+    <li><span class="badge upd">ACTUALIZADO</span> Saga Alibaba: <a href="https://arstechnica.com/tech-policy/2026/06/anthropic-claims-alibaba-defied-trump-to-attack-claude-and-steal-capabilities/">Anthropic dice que Alibaba usó ~25k cuentas para minar/atacar Claude</a> (27-jun), y <a href="https://www.reuters.com/world/china/alibaba-ban-claude-code-workplace-over-alleged-backdoor-risks-source-says-2026-07-03/">Alibaba prohíbe Claude Code internamente por supuesto riesgo de backdoor</a> (3-jul). Continuación del claim de extracción que reporté el 27-jun. <span class="action">· acción: FYI (geopolítica del ecosistema)</span></li>
+  </ul>
+</div>
+
+<h2>Por fuente</h2>
+
+<div class="source">
+<h3>Anthropic oficial</h3>
+<ul>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://www.anthropic.com/news/claude-sonnet-5">Introducing Claude Sonnet 5</a> (30-jun) — adaptive thinking default, 1M ctx, tokenizer +30% tokens. <span class="action">· acción: probá + medí costo</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://www.anthropic.com/news/claude-science-ai-workbench">Claude Science</a> (30-jun) — workbench de IA para científicos. <span class="action">· acción: FYI</span></li>
+</ul>
+</div>
+
+<div class="source">
+<h3>Simon Willison</h3>
+<ul>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://simonwillison.net/2026/Jul/2/understand-to-participate/">Understand to participate</a> (2-jul) — Geoffrey Litt sobre la "deuda cognitiva" al colaborar con agentes: hay que mantener suficiente comprensión para no perder fluidez con el codebase. <span class="action">· acción: leé (refuerza mental engagement, L12)</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://simonwillison.net/2026/Jun/30/claude-sonnet-5/">What's new in Claude Sonnet 5</a> (30-jun) — notas de primera mano sobre el tokenizer y adaptive thinking. <span class="action">· acción: leé</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://simonwillison.net/2026/Jun/28/jon-udell/">Quoting Jon Udell</a> (28-jun) — reframe de "human in the loop": invitar al agente a tu workflow en vez de cederle autoridad. <span class="action">· acción: FYI (cita para L11/L13)</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://simonwillison.net/2026/Jul/2/dspy-datasette-agent-prompts/">Using DSPy to improve Datasette Agent's SQL prompts</a> (2-jul) — evaluar/mejorar system prompts con DSPy; incluir nombres de columnas evita loops de guess-and-retry. <span class="action">· acción: FYI (evals, L15)</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://simonwillison.net/2026/Jul/2/llm-coding-agent/">llm-coding-agent 0.1a0</a> (2-jul) — librería Python con un agente de coding basado en Claude, construida entera con Claude Code. <span class="action">· acción: FYI</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://simonwillison.net/2026/Jun/30/shot-scraper-video/">shot-scraper video</a> (30-jun) — que tu agente grabe demos en video de su trabajo vía storyboards YAML. <span class="action">· acción: FYI (verificación visual)</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://simonwillison.net/2026/Jun/29/ornith/">Ornith-1.0: Self-Scaffolding LLMs</a> (29-jun) — modelo open-weights (9B-397B) optimizado para agentic coding multi-tool. <span class="action">· acción: FYI</span></li>
+</ul>
+</div>
+
+<div class="source">
+<h3>Geoffrey Huntley</h3>
+<ul><li>Sin posts nuevos en la ventana (el de Miami, 26-jun, ya se cubrió el 27-jun).</li></ul>
+</div>
+
+<div class="source">
+<h3>Armin Ronacher</h3>
+<ul><li>Sin posts nuevos ("The Coming Loop", 23-jun, ya cubierto).</li></ul>
+</div>
+
+<div class="source">
+<h3>Reddit (r/ClaudeAI, r/LocalLLaMA)</h3>
+<ul><li>No disponible (ver "Fuentes no disponibles").</li></ul>
+</div>
+
+<div class="source">
+<h3>HackerNews</h3>
+<ul>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://thereallo.dev/blog/claude-code-prompt-steganography">Claude Code is steganographically marking requests</a> (30-jun, 2.420 pts) — análisis de marcado oculto en los requests. <span class="action">· acción: leé (L6, threat model)</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://semgrep.dev/blog/2026/we-have-mythos-at-home-glm-52-beats-claude-in-our-cyber-benchmarks/">GLM 5.2 beats Claude in our cyber benchmarks</a> (28-jun, 1.106 pts) — Semgrep. <span class="action">· acción: leé (relevante a tu research de worker models)</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://zcode.z.ai/cn">ZCode: Claude Code from the makers of GLM</a> (1-jul, 276 pts) — clon de Claude Code sobre GLM. <span class="action">· acción: FYI</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://www.vincentschmalbach.com/claude-code-quietly-looks-5x-more-expensive/">Claude Code just got 5x more expensive</a> (30-jun, 57 pts) — el efecto del tokenizer de Sonnet 5 en costo. <span class="action">· acción: leé (L15)</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://antoine.fi/mri-analysis-using-claude-code-opus">I used Claude Code for a second opinion on my MRI</a> (28-jun, 560 pts) — caso de uso fuera de coding. <span class="action">· acción: FYI</span></li>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://code.claude.com/docs/en/desktop-linux">Claude Desktop en Linux (beta)</a> (30-jun, 53 pts). <span class="action">· acción: FYI</span></li>
+</ul>
+</div>
+
+<div class="source">
+<h3>MCP spec</h3>
+<ul>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://blog.modelcontextprotocol.io/posts/sdk-betas-2026-07-28/">Beta SDKs for the 2026-07-28 MCP Spec RC</a> (29-jun) — el RC trae un <strong>core stateless</strong> que escala sobre HTTP común sin sticky sessions. <span class="action">· acción: FYI (L10)</span></li>
+</ul>
+</div>
+
+<div class="source">
+<h3>Repos de skills (tracking — primera corrida)</h3>
+<ul>
+  <li><span class="badge nuevo">NUEVO</span> <a href="https://github.com/mattpocock/skills">github.com/mattpocock/skills</a> — el tracking nuevo funciona. El repo tiene <strong>más skills de las que instalaste</strong>: además de las 8 tuyas, hay <code>prototype</code>, <code>diagnosing-bugs</code>, <code>research</code>, <code>domain-modeling</code>, <code>codebase-design</code>, <code>code-review</code>, <code>triage</code>, <code>grill-with-docs</code>, <code>ask-matt</code>. <span class="action">· acción: mirá si alguna te sirve (te las puedo instalar)</span></li>
+</ul>
+</div>
+
+<div class="source">
+<h3>X / Twitter</h3>
+<ul><li>Cobertura vía HN (los tweets de Anthropic sobre el levantamiento de export controls de Fable 5 aparecieron ahí). Sin sección aparte esta semana.</li></ul>
+</div>
+
+<h2>Cambios a considerar para el curso</h2>
+<ul>
+  <li><strong>L15 (Costos y modelos)</strong> → actualizar snapshot: <strong>Claude Sonnet 5</strong> (adaptive thinking, 1M ctx) y el punto crítico del <strong>tokenizer +30% tokens</strong> — el precio por token no es el costo real; el tokenizer cambia la aritmética. Fable 5 restaurada.</li>
+  <li><strong>L6 (Permisos / seguridad)</strong> → el caso de "steganographic marking" y los claims de backdoor (Alibaba) son ejemplos reales de <em>qué hace tu agente que no ves</em> y de threat model.</li>
+  <li><strong>L12 (Diagnosticar)</strong> → "Understand to participate" (Geoffrey Litt) sobre deuda cognitiva refuerza el hilo de mental engagement; "human in the loop" (Jon Udell) como reframe.</li>
+  <li><strong>L10 (MCP)</strong> → el RC 2026-07-28 con core stateless es un cambio de arquitectura a mencionar.</li>
+  <li>Pendiente ya identificado: integrar la investigación de <strong>Karpathy</strong> (reporte de hoy) a L1/L2/L12/L16.</li>
+</ul>
+
+<h2>Fuentes no disponibles</h2>
+<ul>
+  <li><strong>Reddit</strong> (r/ClaudeAI, r/LocalLLaMA) — <code>WebFetch</code> sigue bloqueado (4º run consecutivo). El ledger NO se actualizó para Reddit. Recomendación en pie: migrar a API autenticada o MCP.</li>
+</ul>
+
+<h2>Para practicar esta semana</h2>
+<ul>
+  <li><strong>Token math de Sonnet 5 (15 min):</strong> corré la misma tarea con Opus 4.8 y con Sonnet 5 y compará el token count con <code>/cost</code>. Vas a ver en carne propia por qué el tokenizer nuevo importa para el presupuesto (L15 aplicada).</li>
+  <li><strong>Threat model (10 min):</strong> leé el post de steganographic marking y anotá 3 cosas que tu agente podría estar haciendo que no verificás. Es el ejercicio de "verificá lo que hace, no lo que dice" (L6/L12).</li>
+</ul>
+
+<p class="meta-foot">Ledger actualizado: 20 items agregados / 1 actualizado. Total acumulado: ~83 items. (Reddit no se actualizó — fuente fallida.)</p>
+</div>
+</body>
+</html>

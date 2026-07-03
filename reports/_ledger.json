@@ -1,7 +1,175 @@
 {
   "schema_version": 1,
-  "last_run_utc": "2026-06-27T23:10:00Z",
+  "last_run_utc": "2026-07-03T11:35:00Z",
   "items": {
+    "https://www.anthropic.com/news/claude-sonnet-5": {
+      "title": "Introducing Claude Sonnet 5 (adaptive thinking, 1M ctx, new tokenizer +30% tokens)",
+      "source": "anthropic",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-30",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://www.anthropic.com/news/redeploying-fable-5": {
+      "title": "Redeploying Fable 5 (US export controls lifted)",
+      "source": "anthropic",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-30",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://www.anthropic.com/news/claude-science-ai-workbench": {
+      "title": "Claude Science, an AI workbench for scientists",
+      "source": "anthropic",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-30",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://www.anthropic.com/news/fable-safeguards-jailbreak-framework": {
+      "title": "More details on Fable 5's cyber safeguards and jailbreak framework",
+      "source": "anthropic",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-07-02",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://simonwillison.net/2026/Jul/2/understand-to-participate/": {
+      "title": "Understand to participate (Geoffrey Litt, cognitive debt)",
+      "source": "willison",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-07-02",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://simonwillison.net/2026/Jun/30/claude-sonnet-5/": {
+      "title": "What's new in Claude Sonnet 5",
+      "source": "willison",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-30",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://simonwillison.net/2026/Jun/28/jon-udell/": {
+      "title": "Quoting Jon Udell (human in the loop reframe)",
+      "source": "willison",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-28",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://simonwillison.net/2026/Jul/2/dspy-datasette-agent-prompts/": {
+      "title": "Using DSPy to evaluate and improve Datasette Agent's SQL prompts",
+      "source": "willison",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-07-02",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://simonwillison.net/2026/Jul/2/llm-coding-agent/": {
+      "title": "llm-coding-agent 0.1a0",
+      "source": "willison",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-07-02",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://simonwillison.net/2026/Jun/30/shot-scraper-video/": {
+      "title": "Have your agent record video demos with shot-scraper video",
+      "source": "willison",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-30",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://simonwillison.net/2026/Jun/29/ornith/": {
+      "title": "Ornith-1.0: Self-Scaffolding LLMs for Agentic Coding",
+      "source": "willison",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-29",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://thereallo.dev/blog/claude-code-prompt-steganography": {
+      "title": "Claude Code is steganographically marking requests",
+      "source": "hn",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-30",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://semgrep.dev/blog/2026/we-have-mythos-at-home-glm-52-beats-claude-in-our-cyber-benchmarks/": {
+      "title": "GLM 5.2 beats Claude in our cyber benchmarks (Semgrep)",
+      "source": "hn",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-28",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://zcode.z.ai/cn": {
+      "title": "ZCode: Claude Code from the makers of GLM",
+      "source": "hn",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-07-01",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://www.vincentschmalbach.com/claude-code-quietly-looks-5x-more-expensive/": {
+      "title": "Claude Code just got 5x more expensive (Sonnet 5 tokenizer)",
+      "source": "hn",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-30",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://antoine.fi/mri-analysis-using-claude-code-opus": {
+      "title": "I used Claude Code to get a second opinion on my MRI",
+      "source": "hn",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-28",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://code.claude.com/docs/en/desktop-linux": {
+      "title": "Claude Desktop now available on Linux (beta)",
+      "source": "hn",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-30",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://www.reuters.com/world/china/alibaba-ban-claude-code-workplace-over-alleged-backdoor-risks-source-says-2026-07-03/": {
+      "title": "Alibaba to ban Claude Code in workplace over alleged backdoor risks",
+      "source": "hn",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-07-03",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://arstechnica.com/tech-policy/2026/06/anthropic-claims-alibaba-defied-trump-to-attack-claude-and-steal-capabilities/": {
+      "title": "Anthropic claims Alibaba used 25k accounts to mine Claude capabilities",
+      "source": "hn",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-27",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://blog.modelcontextprotocol.io/posts/sdk-betas-2026-07-28/": {
+      "title": "Beta SDKs for the 2026-07-28 MCP Spec Release Candidate (stateless core)",
+      "source": "mcp",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-06-29",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
+    "https://github.com/mattpocock/skills": {
+      "title": "Repo de skills de Matt Pocock (tracking) - skills adicionales disponibles",
+      "source": "github",
+      "first_seen": "2026-07-03T11:35:00Z",
+      "last_seen": "2026-07-03T11:35:00Z",
+      "pub_date": "2026-07-03",
+      "covered_in_report": "reports/2026-07-03-update.html"
+    },
     "https://www.anthropic.com/news/introducing-claude-tag": {
       "title": "Introducing Claude Tag",
       "source": "anthropic",
@@ -547,7 +715,18 @@
     "identity-verification-anthropic",
     "alibaba-distillation-claim",
     "gpt-5.6-series",
-    "recall-local-project-memory"
+    "recall-local-project-memory",
+    "claude-sonnet-5",
+    "sonnet-5-tokenizer-30pct",
+    "fable-5-export-controls-lifted",
+    "claude-code-steganography",
+    "glm-5.2-beats-claude-cyber",
+    "zcode-glm-claude-code",
+    "claude-science",
+    "alibaba-claude-code-ban",
+    "mcp-stateless-rc-2026-07-28",
+    "pocock-skills-repo-tracking",
+    "cognitive-debt-understand-to-participate"
   ],
   "failed_sources_last_run": [
     {

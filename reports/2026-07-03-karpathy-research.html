@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investigación: Andrej Karpathy y el harness engineering</title>
+<style>
+  :root{
+    --bg:#0f1419; --card:#1a2027; --elev:#232b35; --border:#2d3743;
+    --tx:#e6e9ef; --tx2:#9ba5b3; --acc:#d95c41;
+    --ok:#4ade80; --warn:#fbbf24; --info:#60a5fa; --code:#11151c; --danger:#f87171;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--tx);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; line-height:1.7}
+  .wrap{max-width:860px; margin:0 auto; padding:48px 24px 90px}
+  header.rep{border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:8px}
+  h1{font-size:1.95rem; line-height:1.25; margin:0 0 6px}
+  h1 .acc{color:var(--acc)}
+  .sub{color:var(--tx2); font-size:.92rem; font-style:italic}
+  h2{font-size:1.4rem; margin:42px 0 14px; padding-bottom:6px; border-bottom:1px solid var(--border)}
+  h3{font-size:1.08rem; margin:24px 0 8px; color:var(--acc)}
+  a{color:var(--info); text-decoration:none} a:hover{text-decoration:underline}
+  p{margin:10px 0} ul,ol{padding-left:22px} li{margin:7px 0}
+  code{background:var(--code); padding:2px 6px; border-radius:4px;
+    font-family:'SF Mono',Monaco,'Cascadia Code',monospace; font-size:.85em}
+  blockquote{border-left:3px solid var(--acc); margin:14px 0; padding:6px 16px; color:var(--tx);
+    background:var(--card); border-radius:0 8px 8px 0; font-style:italic}
+  .tldr{background:var(--elev); border-left:3px solid var(--acc); border-radius:8px; padding:14px 18px; margin:18px 0}
+  .callout{border-radius:8px; padding:12px 16px; margin:16px 0; background:var(--card)}
+  .callout.tip{border-left:3px solid var(--info)}
+  .callout.ok{border-left:3px solid var(--ok)}
+  .callout.warn{border-left:3px solid var(--warn)}
+  .callout .lbl{display:block; font-size:.72rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:.04em; margin-bottom:4px; color:var(--tx2)}
+  table{border-collapse:collapse; width:100%; margin:16px 0; font-size:.9rem}
+  th,td{border:1px solid var(--border); padding:8px 11px; text-align:left; vertical-align:top}
+  th{background:var(--elev)}
+  .meta-foot{margin-top:48px; padding-top:16px; border-top:1px solid var(--border); color:var(--tx2); font-size:.85rem}
+  .src{font-size:.85rem; color:var(--tx2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="rep">
+  <h1>Investigación: <span class="acc">Andrej Karpathy</span> y su relevancia para el harness engineering</h1>
+  <p class="sub">2026-07-03 · Para JV · Fuentes: Wikipedia, Forbes, karpathy.ai, GitHub, el post de enero 2026, la charla "Software in the Era of AI".</p>
+</header>
+
+<div class="tldr">
+  <strong>TL;DR — por qué te importa</strong>
+  <ul>
+    <li><strong>Quién es</strong>: co-fundador de OpenAI, ex-director de IA de Tesla (Autopilot), fundador de Eureka Labs (educación). <strong>Desde el 19-may-2026 está EN Anthropic</strong>, liderando un equipo que usa Claude para acelerar research de pretraining.</li>
+    <li><strong>Acuñó "vibe coding"</strong> (feb 2025) — el término que dio nombre a toda la ola. Collins Word of the Year 2025.</li>
+    <li><strong>"Software 3.0"</strong>: su tesis de que ahora <em>programás LLMs en lenguaje natural</em>, y <strong>"el context window es el programa, el LLM es el intérprete"</strong>. Es exactamente el principio #1 de tu curso, dicho por él.</li>
+    <li><strong>Su post de enero 2026 sobre los pitfalls de los LLMs codeando es, en la práctica, un manifiesto de harness engineering</strong>: nombra los modos de falla y propone darle al agente criterios de éxito en vez de instrucciones. Mapea directo a tus L3/L11/L12.</li>
+  </ul>
+</div>
+
+<h2>1 · Quién es (timeline)</h2>
+<table>
+  <thead><tr><th>Etapa</th><th>Qué hizo</th></tr></thead>
+  <tbody>
+    <tr><td>Formación</td><td>Nacido en Bratislava (1986), creció en Toronto. Bachelor en Toronto, master en UBC; doctorado en Stanford (deep learning / computer vision).</td></tr>
+    <tr><td>OpenAI (2015-17)</td><td>Co-fundador. Deep learning y computer vision.</td></tr>
+    <tr><td>Tesla (2017-22)</td><td>Director de IA y Autopilot Vision. Acuñó "Software 2.0" (redes neuronales como código).</td></tr>
+    <tr><td>OpenAI (2023-24)</td><td>Volvió; trabajó alrededor de GPT-4 y ChatGPT.</td></tr>
+    <tr><td>Eureka Labs (2024-26)</td><td>Fundó una startup de educación AI-native. Curso LLM101n, proyecto nanochat.</td></tr>
+    <tr><td><strong>Anthropic (2026-)</strong></td><td><strong>19-may-2026</strong>: se unió a Anthropic para liderar un equipo de research en pretraining (reporta a Nick Joseph). Eureka Labs queda diferida, no cerrada.</td></tr>
+  </tbody>
+</table>
+
+<h2>2 · Aportes clave (y cómo conectan con tu curso)</h2>
+
+<h3>Vibe coding (feb 2025)</h3>
+<blockquote>"There's a new kind of coding I call 'vibe coding', where you fully give in to the vibes, embrace exponentials, and forget that the code even exists."</blockquote>
+<p>Lo pensó para prototipos y proyectos descartables de fin de semana. El término explotó (4.5M+ vistas, Collins Word of the Year 2025). <strong>Clave para tu curso</strong>: es el contraste contra el que se define el <em>harness engineering / vibe engineering</em> (Willison). Vibe coding = aceptar sin revisar; harness engineering = verificación estructural. Tu <strong>L3</strong> ya usa esta distinción ("Esto NO es vibe coding").</p>
+
+<h3>Software 3.0 — "el context window es el programa"</h3>
+<p>En su charla <em>"Software in the Era of AI"</em> (2025) plantea tres eras: <strong>1.0</strong> código escrito por humanos, <strong>2.0</strong> pesos de redes neuronales, <strong>3.0</strong> LLMs programados en lenguaje natural (prompts, contexto, tools, ejemplos, memoria).</p>
+<blockquote>"The context window is the program. The LLM is the interpreter."</blockquote>
+<p>También describe a los LLMs como un <strong>nuevo sistema operativo</strong> con una "psicología" propia: capacidades sobrehumanas mezcladas con déficits cognitivos, y una memoria de trabajo (el context window) que tenés que programar vos.</p>
+<div class="callout ok">
+  <span class="lbl">Conexión directa con el curso</span>
+  Esto ES tu principio universal #1 (<em>"el context window es el recurso fundamental"</em>), formulado por Karpathy. Y su marco "LLM como OS con psicología rara" es la base de tu L12 (no antropomorfizar: el agente no es un junior, es un sistema con déficits específicos que compensás con el harness).
+</div>
+
+<h3>El post de enero 2026 — el manifiesto harness</h3>
+<p>Tras pasar de ~80% coding manual a ~80% coding con agentes en dos meses, Karpathy publicó (26-ene-2026) su diagnóstico de por qué los agentes fallan. Tres modos de falla:</p>
+<ol>
+  <li><strong>Supuestos silenciosos y errados</strong>: <em>"make wrong assumptions on your behalf and just run along with them without checking... don't seek clarifications, don't surface inconsistencies, don't present tradeoffs, don't push back when they should."</em></li>
+  <li><strong>Sobre-complicación</strong>: <em>"they really like to overcomplicate code and APIs, bloat abstractions, don't clean up dead code... 1000 lines when 100 would do."</em></li>
+  <li><strong>Cambios no intencionados</strong>: modifican/borran código y comentarios que no entienden del todo, aunque sean ortogonales a la tarea.</li>
+</ol>
+<p>De ahí salieron los <strong>4 principios</strong> (que ya tenés instalados como el plugin <code>andrej-karpathy-skills:karpathy-guidelines</code>):</p>
+<ol>
+  <li><strong>Think Before Coding</strong> — explicitar supuestos y tradeoffs primero. <span class="src">(= tu skill <code>grill-me</code>)</span></li>
+  <li><strong>Simplicity First</strong> — el mínimo código que resuelve lo pedido. <span class="src">(= tu anti-Christmas-tree)</span></li>
+  <li><strong>Surgical Changes</strong> — tocar solo lo necesario, respetar el estilo.</li>
+  <li><strong>Goal-Driven Execution</strong> — convertir la tarea en un success check y loopear hasta pasarlo. <span class="src">(= tu skill <code>tdd</code> + el loop del curso)</span></li>
+</ol>
+<blockquote>"LLMs are exceptionally good at looping until they meet specific goals. Do not tell it what to do. Give it success criteria and watch it go."</blockquote>
+<div class="callout tip">
+  <span class="lbl">Por qué es oro para el curso</span>
+  Los 3 modos de falla de Karpathy son casi 1:1 con tu <strong>taxonomía de 5 fallas de L12</strong> (falta contexto / hizo lo prohibido / no verificó / contexto sucio / inventó). Y "dale criterios de éxito, no instrucciones" es tu principio de <em>verification &gt; generation</em> dicho desde el otro lado. Es una cita de autoridad perfecta para abrir L12.
+</div>
+
+<h3>nanochat / Eureka Labs — el educador</h3>
+<p>nanochat es su pipeline open-source para entrenar un ChatGPT "que $100 pueden comprar" (de tokenización a deployment, código compacto y legible). Es el capstone de <strong>LLM101n</strong>, su curso en Eureka Labs. Relevante para vos como <em>referencia de pedagogía técnica</em>: Karpathy enseña construyendo lo mínimo legible de punta a punta — mismo espíritu que tu curso con BookClub.</p>
+
+<h2>3 · Lo más jugoso: Karpathy ahora está en Anthropic</h2>
+<p>El 19-may-2026 se sumó a <strong>Anthropic</strong> para liderar research de pretraining usando Claude. Que la persona que acuñó "vibe coding" y formuló "Software 3.0" ahora trabaje en la empresa detrás de Claude Code es una señal fuerte de hacia dónde va el campo — y le da más peso a que tu curso se construya sobre el ecosistema Claude. Es también un buen gancho narrativo para <strong>L16</strong> (mantenerte vigente: seguí a los que usan Y critican con especificidad).</p>
+
+<h2>4 · Dónde aparece / debería aparecer en el curso</h2>
+<table>
+  <thead><tr><th>Lección</th><th>Uso</th><th>Estado</th></tr></thead>
+  <tbody>
+    <tr><td><strong>L1/L2</strong></td><td>Software 1.0/2.0/3.0 + "el context window es el programa" como framing de qué es programar un agente</td><td>A integrar</td></tr>
+    <tr><td><strong>L3</strong></td><td>Vibe coding vs harness engineering</td><td>✅ Ya está</td></tr>
+    <tr><td><strong>L12</strong></td><td>Los 3 modos de falla de enero 2026 como cita de apertura de la taxonomía; "dale criterios de éxito, no instrucciones"</td><td>A integrar</td></tr>
+    <tr><td><strong>L16</strong></td><td>Karpathy como figura a seguir + su llegada a Anthropic</td><td>Parcial (REFERENCES §7 lo nombra)</td></tr>
+  </tbody>
+</table>
+<p>¿Querés que integre estos puntos al <code>curso.html</code> y actualice REFERENCES §7 (hoy solo dice "acuñó vibe coding")? Lo hago en una pasada si me das el OK.</p>
+
+<h2>Fuentes</h2>
+<p class="src">
+  <a href="https://en.wikipedia.org/wiki/Andrej_Karpathy">Wikipedia — Andrej Karpathy</a> · <a href="https://karpathy.ai/">karpathy.ai</a> · <a href="https://www.forbes.com/sites/aliciapark/2026/05/19/openai-cofounder-and-former-tesla-ai-leader-andrej-karpathy-joins-anthropic/">Forbes — se une a Anthropic (may 2026)</a> · <a href="https://en.wikipedia.org/wiki/Vibe_coding">Wikipedia — Vibe coding</a> · <a href="https://www.latent.space/p/s3">Latent Space — Software 3.0</a> · <a href="https://github.com/multica-ai/andrej-karpathy-skills">GitHub — andrej-karpathy-skills</a> · <a href="https://aiengineering.beehiiv.com/p/andrej-karpathy-s-four-principles-for-better-llm-coding">Los 4 principios (post ene 2026)</a> · <a href="https://github.com/karpathy/nanochat">GitHub — nanochat</a>
+</p>
+
+<p class="meta-foot">Investigación sintetizada por Claude (Opus 4.8) el 2026-07-03. Fuentes primarias y de prensa mayor confiables; algunos detalles biográficos (fechas exactas de título) provienen de perfiles secundarios. Para una pasada con verificación adversarial, pedí <code>/deep-research</code>.</p>
+</div>
+</body>
+</html>
